@@ -21,4 +21,13 @@ public interface UserConstant {
      */
     String BAN_ROLE = "ban";
 
+    /**
+     * 用户 ID 长度
+     */
+    Integer LENGTH_10 = 10;
+
+    Integer ONE = 1;
+
+    Integer ZERO = 0;
+
 }

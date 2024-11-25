@@ -11,4 +11,8 @@ public interface RedisConstant {
 
     Integer TIME_1MIN = 60 * 1000;
 
+    Integer TIME_1DAY = 24 * 60 * 60 * 1000;
+
+    String TOKEN_WEB = "klive:web:";
+
 }
