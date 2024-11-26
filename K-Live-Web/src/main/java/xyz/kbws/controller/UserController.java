@@ -2,6 +2,8 @@ package xyz.kbws.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.wf.captcha.ArithmeticCaptcha;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import xyz.kbws.common.BaseResponse;
@@ -17,7 +19,6 @@ import xyz.kbws.model.vo.CheckCodeVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.UserService;
-import xyz.kbws.utils.JwtUtil;
 import xyz.kbws.utils.NetUtil;
 
 import javax.annotation.Resource;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户接口")
 public class UserController {
 
     @Resource
@@ -42,6 +44,7 @@ public class UserController {
     @Resource
     private RedissonLimiter redissonLimiter;
 
+    @ApiOperation(value = "获取验证码")
     @GetMapping("/checkCode")
     public BaseResponse<CheckCodeVO> checkCode() {
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(100, 42);
@@ -55,6 +58,7 @@ public class UserController {
         return ResultUtils.success(checkCodeVO);
     }
 
+    @ApiOperation(value = "注册")
     @PostMapping("/register")
     public BaseResponse<Boolean> register(@RequestBody UserRegisterRequest userRegisterRequest) {
         try {
@@ -69,6 +73,7 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "登录")
     @PostMapping("/login")
     public BaseResponse<UserVO> login(@RequestBody UserLoginRequest userLoginRequest) {
         ThrowUtils.throwIf(userLoginRequest == null, ErrorCode.PARAMS_ERROR);
@@ -77,6 +82,7 @@ public class UserController {
         return ResultUtils.success(userVO);
     }
 
+    @ApiOperation(value = "自动登录")
     @GetMapping("/autoLogin")
     public BaseResponse<UserVO> autoLogin(HttpServletRequest request) {
         String token = request.getHeader("token");
@@ -90,6 +96,7 @@ public class UserController {
         return ResultUtils.success(userVO);
     }
 
+    @ApiOperation(value = "退出登录")
     @GetMapping("/logout")
     public BaseResponse<String> logout(HttpServletRequest request) {
         String token = request.getHeader("token");
