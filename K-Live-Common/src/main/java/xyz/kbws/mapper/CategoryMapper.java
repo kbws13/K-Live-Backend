@@ -1,7 +1,10 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.Category;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +14,9 @@ import xyz.kbws.model.entity.Category;
 */
 public interface CategoryMapper extends BaseMapper<Category> {
 
+    Integer selectMaxSort(@Param("parentCategoryId") Integer parentCategoryId);
+
+    Boolean updateSortBatch(@Param("categoryList")List<Category> categoryList);
 }
 
 

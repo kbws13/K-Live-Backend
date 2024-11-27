@@ -15,4 +15,6 @@ public interface RedisConstant {
 
     String TOKEN_WEB = "klive:web:";
 
+    String CATEGORY_LIST = "klive:category:list:";
+
 }

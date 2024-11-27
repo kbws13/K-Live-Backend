@@ -15,4 +15,7 @@ public class AppConfig {
 
     @Value("${project.folder:}")
     private String projectFolder;
+
+    @Value("${ffmpeg.showLog:}")
+    private Boolean showFFmpegLog;
 }

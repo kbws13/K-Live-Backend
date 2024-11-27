@@ -1,13 +1,14 @@
 package xyz.kbws.redis;
 
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.json.JSONUtil;
 import org.springframework.stereotype.Component;
 import xyz.kbws.constant.RedisConstant;
+import xyz.kbws.model.entity.Category;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.utils.JwtUtil;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author kbws
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
 public class RedisComponent {
 
     @Resource
-    private RedisUtils redisUtils;
+    private RedisUtils<Object> redisUtils;
 
     public String saveCheckCode(String code) {
         String checkCodeKey = RandomUtil.randomString(8);
@@ -50,5 +51,9 @@ public class RedisComponent {
     public void cleanToken(String token) {
         String userId = JwtUtil.getUserId(token);
         redisUtils.delete(RedisConstant.TOKEN_WEB + userId);
+    }
+
+    public void saveCategoryList(List<Category> categoryList) {
+        redisUtils.set(RedisConstant.CATEGORY_LIST, categoryList);
     }
 }

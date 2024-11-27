@@ -19,4 +19,14 @@
         parentCategoryId,icon,background,
         sort
     </sql>
+
+    <select id="selectMaxSort" resultType="java.lang.Integer">
+        select ifnull(max(sort), 0) from category where parentCategoryId =#{parentCategoryId}
+    </select>
+
+    <update id="updateSortBatch">
+        <foreach collection="categoryList" separator=";" item="item">
+            update category set sort = #{item.sort} where id = #{item.id} and parentCategoryId = #{item.parentCategoryId};
+        </foreach>
+    </update>
 </mapper>

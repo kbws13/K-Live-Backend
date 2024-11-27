@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -49,6 +51,9 @@ public class Category implements Serializable {
      * 排序号
      */
     private Integer sort;
+
+    @TableField(exist = false)
+    private List<Category> children;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
