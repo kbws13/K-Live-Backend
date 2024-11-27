@@ -20,6 +20,7 @@ import xyz.kbws.service.CategoryService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,6 +37,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Resource
     private RedisComponent redisComponent;
+
+    @Override
+    public List<Category> getAllCategory() {
+        List<Category> categoryList = redisComponent.getCategoryList();
+        if (categoryList.isEmpty()) {
+            save2Redis();
+        }
+        return redisComponent.getCategoryList();
+    }
 
     @Override
     public List<Category> queryCategory(CategoryQueryRequest categoryQueryRequest) {

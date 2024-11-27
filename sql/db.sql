@@ -37,3 +37,89 @@ create table category
     sort             tinyint(4)                     not null comment '排序号',
     unique index idx_key_code (code) using BTREE
 ) comment '分类表';
+
+create table videoPost
+(
+    id               varchar(10) primary key                 not null comment '视频 id',
+    cover            varchar(50)                             not null comment '视频封面',
+    name             varchar(100)                            not null comment '视频名称',
+    userId           varchar(10)                             not null comment '用户 id',
+    categoryId       int           default null comment '分类 id',
+    parentCategoryId int                                     not null comment '父级分类 id',
+    status           tinyint(1)                              not null comment '0:转码中 1:转码失败 2:待审核 3:审核成功 4:审核失败',
+    postType         tinyint(4)                              not null comment '0:自己制作 1:转载',
+    originInfo       varchar(200)  default null comment '源资源说明',
+    tags             varchar(300)  default null comment '标签',
+    introduction     varchar(2000) default null comment '简介',
+    interaction      varchar(5)    default null comment '互动设置',
+    duration         int           default null comment '持续时间(秒)',
+    createTime       datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime       datetime      default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    index idx_create_time (createTime),
+    index idx_user_id (userId),
+    index idx_category_id (categoryId),
+    index idx_parent_category_id (parentCategoryId)
+) comment '已发布视频信息表';
+
+create table videoFilePost
+(
+    fileId         varchar(20) primary key not null comment '文件 id',
+    upload_id      varchar(15)             not null comment '上传 id',
+    userId         varchar(10)             not null comment '用户 id',
+    videoId        varchar(10)             not null comment '视频 id',
+    fileIndex      int                     not null comment '文件索引',
+    fileName       varchar(200)            not null comment '文件名',
+    fileSize       bigint       default null comment '文件大小',
+    filePath       varchar(100) default null comment '文件路径',
+    updateType     tinyint(4)   default null comment '0:无更新 1:有更新',
+    transferResult tinyint(4)   default null comment '0:转码中 1:转码成功 2:转码失败',
+    duration       int          default null comment '持续时间(秒)',
+    unique index idx_key_upload_id (upload_id, userId),
+    index idx_video_id (videoId)
+) comment '已发布视频文件信息表';
+
+create table video
+(
+    id               varchar(10) primary key                 not null comment '视频 id',
+    cover            varchar(50)                             not null comment '视频封面',
+    name             varchar(100)                            not null comment '视频名称',
+    userId           varchar(10)                             not null comment '用户 id',
+    categoryId       int           default null comment '分类 id',
+    parentCategoryId int                                     not null comment '父级分类 id',
+    status           tinyint(1)                              not null comment '0:转码中 1:转码失败 2:待审核 3:审核成功 4:审核失败',
+    postType         tinyint(4)                              not null comment '0:自己制作 1:转载',
+    originInfo       varchar(200)  default null comment '源资源说明',
+    tags             varchar(300)  default null comment '标签',
+    introduction     varchar(2000) default null comment '简介',
+    interaction      varchar(5)    default null comment '互动设置',
+    duration         int           default null comment '持续时间(秒)',
+    playCount        int           default 0 comment '播放数量',
+    likeCount        int           default 0 comment '点赞数量',
+    danmuCount       int           default 0 comment '弹幕数量',
+    commentCount     int           default 0 comment '评论数量',
+    coinCount        int           default 0 comment '投币数量',
+    collectCount     int           default 0 comment '收藏数量',
+    recommendType    tinyint(1)    default 0 comment '是否推荐 0:未推荐 1:已推荐',
+    lastPlayTime     datetime      default null comment '最后播放时间',
+    createTime       datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime       datetime      default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    index idx_create_time (createTime),
+    index idx_user_id (userId),
+    index idx_category_id (categoryId),
+    index idx_parent_category_id (parentCategoryId),
+    index idx_recommend_type (recommendType),
+    index idx_last_update_time (lastPlayTime)
+) comment '视频信息表';
+
+create table videoFile
+(
+    fileId         varchar(20) primary key not null comment '文件 id',
+    userId         varchar(10)             not null comment '用户 id',
+    videoId        varchar(10)             not null comment '视频 id',
+    fileIndex      int                     not null comment '文件索引',
+    fileName       varchar(200)            not null comment '文件名',
+    fileSize       bigint       default null comment '文件大小',
+    filePath       varchar(100) default null comment '文件路径',
+    duration       int          default null comment '持续时间(秒)',
+    index idx_video_id (videoId)
+) comment '视频文件信息表';

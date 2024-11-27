@@ -18,6 +18,8 @@ import java.util.List;
 */
 public interface CategoryService extends IService<Category> {
 
+    List<Category> getAllCategory();
+
     List<Category> queryCategory(CategoryQueryRequest categoryQueryRequest);
 
     Boolean addCategory(CategoryAddRequest categoryAddRequest);

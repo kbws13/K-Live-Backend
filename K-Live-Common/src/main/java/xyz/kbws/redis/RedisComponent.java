@@ -56,4 +56,8 @@ public class RedisComponent {
     public void saveCategoryList(List<Category> categoryList) {
         redisUtils.set(RedisConstant.CATEGORY_LIST, categoryList);
     }
+
+    public List<Category> getCategoryList() {
+        return (List<Category>) redisUtils.get(RedisConstant.CATEGORY_LIST);
+    }
 }
