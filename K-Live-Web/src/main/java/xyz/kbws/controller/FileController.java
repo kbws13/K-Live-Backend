@@ -1,5 +1,8 @@
 package xyz.kbws.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,12 +15,14 @@ import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.config.AppConfig;
 import xyz.kbws.config.SystemSetting;
+import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.FileConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.model.dto.file.PreUploadVideoRequest;
 import xyz.kbws.model.vo.UploadingFileVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
+import xyz.kbws.utils.FFmpegUtil;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +47,9 @@ public class FileController {
 
     @Resource
     private RedisComponent redisComponent;
+
+    @Resource
+    private FFmpegUtil fFmpegUtil;
 
     @Resource
     private AppConfig appConfig;
@@ -94,6 +102,44 @@ public class FileController {
         fileVO.setChunkIndex(chunkIndex);
         fileVO.setFileSize(fileVO.getFileSize() + chunkFIle.getSize());
         redisComponent.updateUploadVideoFile(userVO.getId(), fileVO);
+    }
+
+    @ApiOperation(value = "删除已上传视频")
+    @AuthCheck
+    @PostMapping("/delUploadVide")
+    public BaseResponse<String> delUploadVide(@NotNull String uploadId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        UploadingFileVO fileVO = redisComponent.getUploadVideoFile(userVO.getId(), uploadId);
+        if (fileVO == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件不存在请重新上传");
+        }
+        redisComponent.deleteUploadVideoFile(userVO.getId(), uploadId);
+        FileUtil.del(new File(appConfig.getProjectFolder() + FileConstant.FILE_FOLDER + FileConstant.FILE_FOLDER_TEMP + fileVO.getFilePath()));
+        return ResultUtils.success(uploadId);
+    }
+
+    @ApiOperation(value = "上传图片")
+    @AuthCheck
+    @PostMapping("/uploadImage")
+    public BaseResponse<String> uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException {
+        String date = DateUtil.format(DateUtil.date(), "yyyyMMdd");
+        String folder = appConfig.getProjectFolder() + FileConstant.FILE_FOLDER + FileConstant.FILE_COVER + date;
+        File folderFile = new File(folder);
+        if (!folderFile.exists()) {
+            folderFile.mkdirs();
+        }
+        String fileName = file.getOriginalFilename();
+        String fileSuffix = fileName.substring(fileName.indexOf("."));
+        String realFileName = RandomUtil.randomString(CommonConstant.LENGTH_30) + fileSuffix;
+        String filePath = folder + "/" + realFileName;
+        file.transferTo(new File(filePath));
+        if (createThumbnail) {
+            // 生成缩略图
+            fFmpegUtil.createImageThumbnail(filePath);
+        }
+        String res = FileConstant.FILE_COVER + date + "/" + realFileName;
+        return ResultUtils.success(res);
     }
 
     protected void readFile(HttpServletResponse response, String filePath) {

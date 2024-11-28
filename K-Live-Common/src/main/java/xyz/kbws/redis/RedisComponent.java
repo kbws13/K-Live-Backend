@@ -98,6 +98,10 @@ public class RedisComponent {
         redisUtils.setEx(RedisConstant.UPLOADING_FILE + userId + uploadingFileVO.getUploadId(), uploadingFileVO, RedisConstant.TIME_1DAY);
     }
 
+    public void deleteUploadVideoFile(String userId, String uploadId) {
+        redisUtils.delete(RedisConstant.UPLOADING_FILE + userId + uploadId);
+    }
+
     public SystemSetting getSystemSetting() {
         SystemSetting systemSetting = (SystemSetting) redisUtils.get(RedisConstant.SYSTEM_SETTING);
         if (systemSetting == null) {
