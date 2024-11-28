@@ -64,7 +64,7 @@ create table videoPost
 create table videoFilePost
 (
     fileId         varchar(20) primary key not null comment '文件 id',
-    upload_id      varchar(15)             not null comment '上传 id',
+    uploadId      varchar(15)             not null comment '上传 id',
     userId         varchar(10)             not null comment '用户 id',
     videoId        varchar(10)             not null comment '视频 id',
     fileIndex      int                     not null comment '文件索引',
@@ -74,7 +74,7 @@ create table videoFilePost
     updateType     tinyint(4)   default null comment '0:无更新 1:有更新',
     transferResult tinyint(4)   default null comment '0:转码中 1:转码成功 2:转码失败',
     duration       int          default null comment '持续时间(秒)',
-    unique index idx_key_upload_id (upload_id, userId),
+    unique index idx_key_upload_id (uploadId, userId),
     index idx_video_id (videoId)
 ) comment '已发布视频文件信息表';
 
@@ -113,13 +113,13 @@ create table video
 
 create table videoFile
 (
-    fileId         varchar(20) primary key not null comment '文件 id',
-    userId         varchar(10)             not null comment '用户 id',
-    videoId        varchar(10)             not null comment '视频 id',
-    fileIndex      int                     not null comment '文件索引',
-    fileName       varchar(200)            not null comment '文件名',
-    fileSize       bigint       default null comment '文件大小',
-    filePath       varchar(100) default null comment '文件路径',
-    duration       int          default null comment '持续时间(秒)',
+    fileId    varchar(20) primary key not null comment '文件 id',
+    userId    varchar(10)             not null comment '用户 id',
+    videoId   varchar(10)             not null comment '视频 id',
+    fileIndex int                     not null comment '文件索引',
+    fileName  varchar(200)            not null comment '文件名',
+    fileSize  bigint       default null comment '文件大小',
+    filePath  varchar(100) default null comment '文件路径',
+    duration  int          default null comment '持续时间(秒)',
     index idx_video_id (videoId)
 ) comment '视频文件信息表';

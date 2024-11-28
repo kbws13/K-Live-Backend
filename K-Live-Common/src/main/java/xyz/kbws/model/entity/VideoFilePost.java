@@ -22,7 +22,7 @@ public class VideoFilePost implements Serializable {
     /**
      * 上传 id
      */
-    private String upload_id;
+    private String uploadId;
 
     /**
      * 用户 id

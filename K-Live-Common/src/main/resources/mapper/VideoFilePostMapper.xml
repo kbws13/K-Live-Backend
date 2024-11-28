@@ -6,7 +6,7 @@
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.VideoFilePost">
             <id property="fileId" column="fileId" jdbcType="VARCHAR"/>
-            <result property="upload_id" column="upload_id" jdbcType="VARCHAR"/>
+            <result property="uploadId" column="uploadId" jdbcType="VARCHAR"/>
             <result property="userId" column="userId" jdbcType="VARCHAR"/>
             <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
             <result property="fileIndex" column="fileIndex" jdbcType="INTEGER"/>
@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        fileId,upload_id,userId,
+        fileId,uploadId,userId,
         videoId,fileIndex,fileName,
         fileSize,filePath,updateType,
         transferResult,duration

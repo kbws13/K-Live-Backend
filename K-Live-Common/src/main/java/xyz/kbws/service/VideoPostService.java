@@ -1,7 +1,10 @@
 package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -10,4 +13,7 @@ import xyz.kbws.model.entity.VideoPost;
 */
 public interface VideoPostService extends IService<VideoPost> {
 
+    void addVideoPost(VideoPost videoPost, List<VideoFilePost> videoFilePosts);
+
+    void updateVideoPost(VideoPost videoPost, List<VideoFilePost> videoFilePosts);
 }
