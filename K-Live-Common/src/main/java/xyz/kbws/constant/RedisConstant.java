@@ -17,4 +17,8 @@ public interface RedisConstant {
 
     String CATEGORY_LIST = "klive:category:list:";
 
+    String UPLOADING_FILE = "klive:uploading:";
+
+    String SYSTEM_SETTING = "klive:systemSetting:";
+
 }

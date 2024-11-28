@@ -16,4 +16,6 @@ public interface FileConstant {
     String FILE_FOLDER_TEMP = "temp/";
 
     String IMAGE_THUMBNAIL_SUFFIX = "_thumbnail.jpg";
+
+    Long MB_SIZE = 1024 * 1024L;
 }

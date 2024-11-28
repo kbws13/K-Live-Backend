@@ -1,13 +1,20 @@
 package xyz.kbws.redis;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import org.springframework.stereotype.Component;
+import xyz.kbws.config.AppConfig;
+import xyz.kbws.config.SystemSetting;
+import xyz.kbws.constant.CommonConstant;
+import xyz.kbws.constant.FileConstant;
 import xyz.kbws.constant.RedisConstant;
 import xyz.kbws.model.entity.Category;
+import xyz.kbws.model.vo.UploadingFileVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.utils.JwtUtil;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -20,6 +27,9 @@ public class RedisComponent {
 
     @Resource
     private RedisUtils<Object> redisUtils;
+
+    @Resource
+    private AppConfig appConfig;
 
     public String saveCheckCode(String code) {
         String checkCodeKey = RandomUtil.randomString(8);
@@ -59,5 +69,40 @@ public class RedisComponent {
 
     public List<Category> getCategoryList() {
         return (List<Category>) redisUtils.get(RedisConstant.CATEGORY_LIST);
+    }
+
+    public String savePreVideoFile(String userId, String fileName, Integer chunks) {
+        String uploadId = RandomUtil.randomString(CommonConstant.LENGTH_15);
+        String date = DateUtil.format(DateUtil.date(), "yyyyMMdd");
+        String filePath = date + "/" + userId + uploadId;
+        String folder = appConfig.getProjectFolder() + FileConstant.FILE_FOLDER + FileConstant.FILE_FOLDER_TEMP + filePath;
+        File folderFile = new File(folder);
+        if (!folderFile.exists()) {
+            folderFile.mkdirs();
+        }
+        UploadingFileVO uploadingFileVO = new UploadingFileVO();
+        uploadingFileVO.setUploadId(uploadId);
+        uploadingFileVO.setFileName(fileName);
+        uploadingFileVO.setChunkIndex(0);
+        uploadingFileVO.setChunks(chunks);
+        uploadingFileVO.setFilePath(filePath);
+        redisUtils.setEx(RedisConstant.UPLOADING_FILE + userId + uploadId, uploadingFileVO, RedisConstant.TIME_1DAY);
+        return uploadId;
+    }
+
+    public UploadingFileVO getUploadVideoFile(String userId, String uploadId) {
+        return (UploadingFileVO) redisUtils.get(RedisConstant.UPLOADING_FILE + userId + uploadId);
+    }
+
+    public void updateUploadVideoFile(String userId, UploadingFileVO uploadingFileVO) {
+        redisUtils.setEx(RedisConstant.UPLOADING_FILE + userId + uploadingFileVO.getUploadId(), uploadingFileVO, RedisConstant.TIME_1DAY);
+    }
+
+    public SystemSetting getSystemSetting() {
+        SystemSetting systemSetting = (SystemSetting) redisUtils.get(RedisConstant.SYSTEM_SETTING);
+        if (systemSetting == null) {
+            systemSetting = new SystemSetting();
+        }
+        return systemSetting;
     }
 }
