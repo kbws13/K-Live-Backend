@@ -1,12 +1,15 @@
 package xyz.kbws.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.constant.MqConstant;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoFilePostMapper;
@@ -14,6 +17,7 @@ import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.VideoStatusEnum;
+import xyz.kbws.rabbitmq.MessageProducer;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoFilePostService;
 import xyz.kbws.service.VideoPostService;
@@ -42,6 +46,9 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
     @Resource
     private RedisComponent redisComponent;
+
+    @Resource
+    private MessageProducer messageProducer;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -102,7 +109,9 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
             List<String> delFileIdList = deleteFileList.stream().map(VideoFilePost::getFileId).collect(Collectors.toList());
             videoFilePostMapper.deleteBatchByFileId(delFileIdList, videoPost.getUserId());
             List<String> delFilePathList = deleteFileList.stream().map(VideoFilePost::getFilePath).collect(Collectors.toList());
-            // TODO 发送删除文件消息到消息队列
+            // 发送删除文件消息到消息队列
+            JSONArray jsonArray = JSONUtil.parseArray(delFilePathList);
+            messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.FILE_ROUTING_KEY, jsonArray.toString());
         }
     }
 

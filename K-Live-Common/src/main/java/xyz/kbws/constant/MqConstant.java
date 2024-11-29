@@ -10,6 +10,8 @@ public interface MqConstant {
     String FILE_EXCHANGE_NAME = "file_exchange";
     // 交换队列
     String FILE_QUEUE = "file_queue";
+    // 路由键
+    String FILE_ROUTING_KEY = " file_routingKey";
     // 路由模式
     String FILE_DIRECT_EXCHANGE = "direct";
 

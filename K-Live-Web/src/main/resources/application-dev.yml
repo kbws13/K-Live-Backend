@@ -28,11 +28,6 @@ spring:
         max-idle: 10
         min-idle: 0
     timeout: 2000
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
 
 mybatis-plus:
   configuration:
