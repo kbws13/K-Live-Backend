@@ -32,6 +32,7 @@
         <mybatisPlus.version>3.5.2</mybatisPlus.version>
         <logback.version>1.2.10</logback.version>
         <mysql.version>8.0.23</mysql.version>
+        <rabbitmq.version>2.6.13</rabbitmq.version>
         <aspectjweaver.version>1.9.3</aspectjweaver.version>
         <hutool.version>5.8.8</hutool.version>
         <fastjson.version>1.2.83</fastjson.version>
@@ -81,6 +82,12 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
+            </dependency>
+            <!--RabbitMQ-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${rabbitmq.version}</version>
             </dependency>
             <!--Aspect-->
             <dependency>

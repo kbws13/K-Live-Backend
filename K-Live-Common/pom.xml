@@ -43,6 +43,12 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!--RabbitMQ-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
          <!-- Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

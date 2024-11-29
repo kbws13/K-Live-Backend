@@ -1,7 +1,10 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.VideoFilePost;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +14,7 @@ import xyz.kbws.model.entity.VideoFilePost;
 */
 public interface VideoFilePostMapper extends BaseMapper<VideoFilePost> {
 
+    void deleteBatchByFileId(@Param("fileIdList")List<String> fileIdList, @Param("userId") String userId);
 }
 
 

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
+import xyz.kbws.mapper.VideoFilePostMapper;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
@@ -35,6 +36,9 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
     @Resource
     private VideoFilePostService videoFilePostService;
+
+    @Resource
+    private VideoFilePostMapper videoFilePostMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -94,6 +98,12 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
             videoPost.setStatus(VideoStatusEnum.STATUS2.getValue());
         }
         this.updateById(videoPost);
+        if (!deleteFileList.isEmpty()) {
+            List<String> delFileIdList = deleteFileList.stream().map(VideoFilePost::getFileId).collect(Collectors.toList());
+            videoFilePostMapper.deleteBatchByFileId(delFileIdList, videoPost.getUserId());
+            List<String> delFilePathList = deleteFileList.stream().map(VideoFilePost::getFilePath).collect(Collectors.toList());
+            // TODO 发送删除文件消息到消息队列
+        }
     }
 
     private Boolean changeVideo(VideoPost videoPost) {

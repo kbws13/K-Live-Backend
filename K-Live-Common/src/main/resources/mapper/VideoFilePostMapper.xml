@@ -24,4 +24,11 @@
         fileSize,filePath,updateType,
         transferResult,duration
     </sql>
+
+    <delete id="deleteBatchByFileId">
+        delete from videoFilePost where fileId in (
+        <foreach collection="fileIdList" separator="," item="item">${item}</foreach>
+            )
+        and userId = #{userId}
+    </delete>
 </mapper>
