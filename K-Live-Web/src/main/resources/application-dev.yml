@@ -28,6 +28,10 @@ spring:
         max-idle: 10
         min-idle: 0
     timeout: 2000
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
 
 mybatis-plus:
   configuration:

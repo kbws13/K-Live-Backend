@@ -21,4 +21,6 @@ public interface MqConstant {
     String DLX_EXCHANGE = "dlx_exchange";
     // 死信队列
     String DLX_QUEUE = "dlx_queue";
+    // 死信队列路由键
+    String DLX_ROUTING_KEY = "dlx_del_file_routingKey";
 }

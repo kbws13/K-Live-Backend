@@ -47,7 +47,7 @@ public class MessageConsumer {
     @RabbitListener(
             bindings = @QueueBinding(
                     value = @Queue(value = MqConstant.FILE_QUEUE),
-                    exchange = @Exchange(value = MqConstant.FILE_EXCHANGE_NAME),
+                    exchange = @Exchange(name = MqConstant.FILE_EXCHANGE_NAME),
                     key = MqConstant.TRANSFER_VIDEO_ROOTING_KEY
             ),
             ackMode = "MANUAL", concurrency = "2")
