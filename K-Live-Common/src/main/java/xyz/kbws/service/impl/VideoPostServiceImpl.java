@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.MqConstant;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
@@ -16,6 +17,8 @@ import xyz.kbws.mapper.VideoFilePostMapper;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.enums.VideoFileTransferResultEnum;
+import xyz.kbws.model.enums.VideoFileTypeEnum;
 import xyz.kbws.model.enums.VideoStatusEnum;
 import xyz.kbws.rabbitmq.MessageProducer;
 import xyz.kbws.redis.RedisComponent;
@@ -59,6 +62,25 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
         videoPost.setId(RandomUtil.randomNumbers(UserConstant.LENGTH_10));
         videoPost.setStatus(VideoStatusEnum.STATUS0.getValue());
         this.save(videoPost);
+
+        int index = 1;
+        for (VideoFilePost videoFilePost : videoFilePosts) {
+            videoFilePost.setFileIndex(index++);
+            videoFilePost.setVideoId(videoPost.getId());
+            videoFilePost.setUserId(videoPost.getUserId());
+            videoFilePost.setFileId(RandomUtil.randomString(CommonConstant.LENGTH_20));
+            videoFilePost.setUpdateType(VideoFileTypeEnum.UPDATE.getValue());
+            videoFilePost.setTransferResult(VideoFileTransferResultEnum.TRANSFER.getValue());
+        }
+        videoFilePostService.saveOrUpdateBatch(videoFilePosts);
+
+        for (VideoFilePost item : videoFilePosts) {
+            item.setUserId(videoPost.getUserId());
+            item.setVideoId(videoPost.getId());
+        }
+        // 发送视频转码消息到消息队列
+        JSONArray jsonArray = JSONUtil.parseArray(videoFilePosts);
+        messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.TRANSFER_VIDEO_ROOTING_KEY, jsonArray.toString());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -111,8 +133,34 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
             List<String> delFilePathList = deleteFileList.stream().map(VideoFilePost::getFilePath).collect(Collectors.toList());
             // 发送删除文件消息到消息队列
             JSONArray jsonArray = JSONUtil.parseArray(delFilePathList);
-            messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.FILE_ROUTING_KEY, jsonArray.toString());
+            messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.DEL_FILE_ROUTING_KEY, jsonArray.toString());
         }
+        int index = 1;
+        for (VideoFilePost videoFilePost : videoFilePosts) {
+            videoFilePost.setFileIndex(index++);
+            videoFilePost.setVideoId(videoPost.getId());
+            videoFilePost.setUserId(videoPost.getUserId());
+            if (videoFilePost.getFileId() == null) {
+                videoFilePost.setFileId(RandomUtil.randomString(CommonConstant.LENGTH_20));
+                videoFilePost.setUpdateType(VideoFileTypeEnum.UPDATE.getValue());
+                videoFilePost.setTransferResult(VideoFileTransferResultEnum.TRANSFER.getValue());
+            }
+        }
+        videoFilePostService.saveOrUpdateBatch(videoFilePosts);
+        if (!addFileList.isEmpty()) {
+            for (VideoFilePost item : addFileList) {
+                item.setUserId(videoPost.getUserId());
+                item.setVideoId(videoPost.getId());
+            }
+            // 发送视频转码消息到消息队列
+            JSONArray jsonArray = JSONUtil.parseArray(addFileList);
+            messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.TRANSFER_VIDEO_ROOTING_KEY, jsonArray.toString());
+        }
+    }
+
+    @Override
+    public void transferVideoFile(List<VideoFilePost> VideoFilePost) {
+
     }
 
     private Boolean changeVideo(VideoPost videoPost) {

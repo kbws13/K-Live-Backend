@@ -17,6 +17,7 @@ public enum ErrorCode {
     FORBIDDEN_ERROR(40300, "禁止访问"),
     NOT_FOUND_ERROR(40400, "请求数据不存在"),
     PARAM_NOT_VALID(40500, "参数错误"),
+    NULL_ERROR(40600, "请求数据为空"),
     SYSTEM_ERROR(50000, "系统内部异常"),
     TOKEN_ERROR(50100, "Token解析失败"),
     OPERATION_ERROR(50001, "操作失败");

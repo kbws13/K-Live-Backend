@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
-import xyz.kbws.common.BaseResponse;
 import xyz.kbws.model.dto.videoPost.VideoPostAddRequest;
+import xyz.kbws.model.dto.videoPost.VideoPostUpdateRequest;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.vo.UserVO;
@@ -55,6 +55,19 @@ public class CreateCenterController {
         BeanUtil.copyProperties(videoPostAddRequest, videoPost);
         videoPost.setUserId(userVO.getId());
         videoPostService.addVideoPost(videoPost, videoFilePosts);
+    }
+
+    @ApiOperation(value = "修改视频")
+    @AuthCheck
+    @PostMapping("/updatePostVideo")
+    public void updatePostVide(@RequestBody VideoPostUpdateRequest videoPostUpdateRequest, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        List<VideoFilePost> videoFilePosts = videoPostUpdateRequest.getVideoFilePosts();
+        VideoPost videoPost = new VideoPost();
+        BeanUtil.copyProperties(videoPostUpdateRequest, videoPost);
+        videoPost.setUserId(userVO.getId());
+        videoPostService.updateVideoPost(videoPost, videoFilePosts);
     }
 
 }

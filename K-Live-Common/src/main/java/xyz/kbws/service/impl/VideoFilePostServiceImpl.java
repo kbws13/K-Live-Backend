@@ -12,7 +12,7 @@ import xyz.kbws.service.VideoFilePostService;
 * @createDate 2024-11-28 20:36:17
 */
 @Service
-public class VideoFilepostServiceImpl extends ServiceImpl<VideoFilePostMapper, VideoFilePost>
+public class VideoFilePostServiceImpl extends ServiceImpl<VideoFilePostMapper, VideoFilePost>
     implements VideoFilePostService {
 
 }

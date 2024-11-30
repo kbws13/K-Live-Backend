@@ -18,5 +18,7 @@ public interface CommonConstant {
 
     Integer LENGTH_15 = 15;
 
+    Integer LENGTH_20 = 20;
+
     Integer LENGTH_30 = 30;
 }

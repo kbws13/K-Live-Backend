@@ -16,4 +16,6 @@ public interface VideoPostService extends IService<VideoPost> {
     void addVideoPost(VideoPost videoPost, List<VideoFilePost> videoFilePosts);
 
     void updateVideoPost(VideoPost videoPost, List<VideoFilePost> videoFilePosts);
+
+    void transferVideoFile(List<VideoFilePost> VideoFilePost);
 }
