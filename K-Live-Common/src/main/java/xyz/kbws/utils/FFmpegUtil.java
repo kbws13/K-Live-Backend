@@ -79,7 +79,7 @@ public class FFmpegUtil {
      * @param videoFilePath 视频路径
      */
     public void coverVideo2TS(File tsFolder, String videoFilePath) {
-        String transfer2ts_cmd = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -vbsf h264_mp4toannexb \"%s\"";
+        String transfer2ts_cmd = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -bsf h264_mp4toannexb \"%s\"";
         String cutTs_cmd = "ffmpeg -i \"%s\" -c copy -map 0 0f segment -segment_list \"%s\" -segment_time 10 %s/%%4d.ts";
         String tsPath = tsFolder + File.separator + FileConstant.TS_NAME;
         // 生成 .ts
