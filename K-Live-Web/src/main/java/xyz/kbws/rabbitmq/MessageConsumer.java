@@ -61,8 +61,8 @@ public class MessageConsumer {
 
         try {
             executorService.execute(() -> {
-                List<VideoFilePost> list = JSONUtil.toList(message, VideoFilePost.class);
-                videoPostService.transferVideoFile(list);
+                VideoFilePost videoFilePost = JSONUtil.toBean(message, VideoFilePost.class);
+                videoPostService.transferVideoFile(videoFilePost);
             });
             // 手动确认消息
             channel.basicAck(deliveryTag, false);

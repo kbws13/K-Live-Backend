@@ -18,4 +18,14 @@ public interface FileConstant {
     String IMAGE_THUMBNAIL_SUFFIX = "_thumbnail.jpg";
 
     Long MB_SIZE = 1024 * 1024L;
+
+    String TEMP_VIDEO_NAME = "/temp.mp4";
+
+    String VIDEO_CODE_HEVC = "hevc";
+
+    String VIDEO_TEMP_FILE_SUFFIX = "_temp";
+
+    String TS_NAME = "index.ts";
+
+    String M3U8_NAME = "index.m3u8";
 }

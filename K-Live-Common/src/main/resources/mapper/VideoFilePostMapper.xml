@@ -31,4 +31,8 @@
             )
         and userId = #{userId}
     </delete>
+
+    <select id="sumDuration" resultType="java.lang.Integer" >
+        select ifnull(sum(duration), 0) from videoFilePost where videoId=#{videoId}
+    </select>
 </mapper>

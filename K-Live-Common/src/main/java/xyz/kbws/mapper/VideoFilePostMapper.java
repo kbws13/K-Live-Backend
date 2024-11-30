@@ -15,6 +15,8 @@ import java.util.List;
 public interface VideoFilePostMapper extends BaseMapper<VideoFilePost> {
 
     void deleteBatchByFileId(@Param("fileIdList")List<String> fileIdList, @Param("userId") String userId);
+
+    Integer sumDuration(@Param("videoId") String videoId);
 }
 
 
