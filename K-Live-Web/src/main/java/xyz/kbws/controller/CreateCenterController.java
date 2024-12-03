@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
+import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAddRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostUpdateRequest;
@@ -21,6 +22,7 @@ import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.VideoStatusEnum;
 import xyz.kbws.model.vo.UserVO;
+import xyz.kbws.model.vo.VideoPostVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoFilePostService;
 import xyz.kbws.service.VideoPostService;
@@ -50,6 +52,9 @@ public class CreateCenterController {
 
     @Resource
     private VideoService videoService;
+
+    @Resource
+    private VideoPostMapper videoPostMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -83,29 +88,25 @@ public class CreateCenterController {
     @ApiOperation(value = "查询稿件接口")
     @AuthCheck
     @PostMapping("/loadVideoPost")
-    public BaseResponse<Page<VideoPost>> loadVideoPost(@RequestBody VideoPostQueryRequest videoPostQueryRequest,
+    public BaseResponse<Page<VideoPostVO>> loadVideoPost(@RequestBody VideoPostQueryRequest videoPostQueryRequest,
                                                        HttpServletRequest request) {
         String token = request.getHeader("token");
         UserVO userVO = redisComponent.getUserVO(token);
         Integer status = videoPostQueryRequest.getStatus();
-        String videoName = videoPostQueryRequest.getVideoName();
-        long current = videoPostQueryRequest.getCurrent();
-        long pageSize = videoPostQueryRequest.getPageSize();
-        QueryWrapper<VideoPost> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userId", userVO.getId());
-        queryWrapper.orderByDesc("createTime");
         if (status != null) {
             if (status == -1) {
                 Integer[] array = {VideoStatusEnum.STATUS3.getValue(), VideoStatusEnum.STATUS4.getValue()};
                 List<Integer> list = new ArrayList<>(Arrays.asList(array));
-                queryWrapper.notIn("status", list);
-            }else {
-                queryWrapper.eq("status", status);
+                videoPostQueryRequest.setExcludeStatus(list);
             }
         }
-        queryWrapper.like(StrUtil.isNotEmpty(videoName), "name", videoName);
-        Page<VideoPost> page = videoPostService.page(new Page<>(current, pageSize), queryWrapper);
-        return ResultUtils.success(page);
+        List<VideoPostVO> record = videoPostMapper.loadVideoPost(videoPostQueryRequest, userVO.getId());
+        Page<VideoPostVO> res = new Page<>();
+        res.setRecords(record);
+        res.setCurrent(videoPostQueryRequest.getCurrent());
+        res.setSize(videoPostQueryRequest.getPageSize());
+        res.setSize(record.size());
+        return ResultUtils.success(res);
     }
 
 }

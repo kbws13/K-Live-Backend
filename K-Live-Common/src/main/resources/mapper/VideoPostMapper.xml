@@ -29,4 +29,34 @@
         tags,introduction,interaction,
         duration,createTime,updateTime
     </sql>
+
+    <select id="loadVideoPost" parameterType="xyz.kbws.model.dto.videoPost.VideoPostQueryRequest">
+        SELECT v.*
+        <if test="query.queryCount">
+            ,
+            c.playCount,
+            c.likeCount,
+            c.danmuCount,
+            c.commentCount,
+            c.coinCount,
+            c.collectCount,
+            c.recommendType
+        </if>
+        FROM videoPost v
+        <if test="query.queryCount">
+            LEFT JOIN video c ON c.id = v.id
+        </if>
+        where v.userId = #{userId}
+        <if test="query.status != null">
+            and v.status like CONCAT('%', #{query.videoName}, '%')
+        </if>
+        <if test="query.status != null">
+            and v.status = #{query.status}
+        </if>
+        <if test="query.excludeStatus != null">
+            and v.status not in (<foreach collection="query.excludeStatus" separator="," item="item">#{item}</foreach> )
+        </if>
+        order by v.createTime desc
+        LIMIT #{query.pageSize} OFFSET #{query.current}
+    </select>
 </mapper>

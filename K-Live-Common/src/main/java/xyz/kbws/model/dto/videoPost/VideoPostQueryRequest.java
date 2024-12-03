@@ -4,6 +4,7 @@ import lombok.Data;
 import xyz.kbws.common.PageRequest;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author kbws
@@ -18,6 +19,8 @@ public class VideoPostQueryRequest extends PageRequest implements Serializable {
     private String videoName;
 
     private Boolean queryCount;
+
+    private List<Integer> excludeStatus;
 
     private static final long serialVersionUID = -5819807148578440459L;
 }
