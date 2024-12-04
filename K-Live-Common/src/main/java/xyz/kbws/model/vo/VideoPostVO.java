@@ -2,6 +2,7 @@ package xyz.kbws.model.vo;
 
 import lombok.Data;
 import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.enums.VideoStatusEnum;
 
 import java.io.Serializable;
 
@@ -47,6 +48,16 @@ public class VideoPostVO extends VideoPost implements Serializable {
      * 是否推荐 0:未推荐 1:已推荐
      */
     private Integer recommendType;
+
+    /**
+     * 当前状态
+     */
+    private String statusName;
+
+    public String getStatusName() {
+        VideoStatusEnum videoStatusEnum = VideoStatusEnum.getEnumByValue(getStatus());
+        return videoStatusEnum == null ? "" : videoStatusEnum.getText();
+    }
 
     private static final long serialVersionUID = -4730719816009764374L;
 }

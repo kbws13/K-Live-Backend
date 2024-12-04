@@ -1,13 +1,11 @@
 package xyz.kbws.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
@@ -20,6 +18,7 @@ import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.VideoStatusEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoPostVO;
+import xyz.kbws.model.vo.VideoStatusCountVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoFilePostService;
 import xyz.kbws.service.VideoPostService;
@@ -104,6 +103,33 @@ public class CreateCenterController {
         res.setSize(videoPostQueryRequest.getPageSize());
         res.setSize(record.size());
         return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "获取所有状态视频的数量")
+    @AuthCheck
+    @GetMapping("/getVideoStatusCount")
+    public BaseResponse<VideoStatusCountVO> getVideoStatusCount(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        QueryWrapper<VideoPost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userId", userVO.getId());
+        queryWrapper.eq("status", VideoStatusEnum.STATUS3.getValue());
+        Integer auditPassCount = Math.toIntExact(videoPostService.count(queryWrapper));
+        queryWrapper.clear();
+        queryWrapper.eq("userId", userVO.getId());
+        queryWrapper.eq("status", VideoStatusEnum.STATUS4.getValue());
+        Integer auditFailCount = Math.toIntExact(videoPostService.count(queryWrapper));
+        Integer[] status = {VideoStatusEnum.STATUS3.getValue(), VideoStatusEnum.STATUS4.getValue()};
+        List<Integer> list = Arrays.asList(status);
+        queryWrapper.clear();
+        queryWrapper.eq("userId", userVO.getId());
+        queryWrapper.notIn("status", list);
+        Integer inProcessCount = Math.toIntExact(videoPostService.count(queryWrapper));
+        VideoStatusCountVO videoStatusCountVO = new VideoStatusCountVO();
+        videoStatusCountVO.setAuditPassCount(auditPassCount);
+        videoStatusCountVO.setAuditFailCount(auditFailCount);
+        videoStatusCountVO.setInProcessCount(inProcessCount);
+        return ResultUtils.success(videoStatusCountVO);
     }
 
 }
