@@ -1,8 +1,6 @@
 package xyz.kbws.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +15,6 @@ import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAddRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostUpdateRequest;
-import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.VideoStatusEnum;

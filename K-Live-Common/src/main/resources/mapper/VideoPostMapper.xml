@@ -30,7 +30,7 @@
         duration,createTime,updateTime
     </sql>
 
-    <select id="loadVideoPost" parameterType="xyz.kbws.model.dto.videoPost.VideoPostQueryRequest">
+    <select id="loadVideoPost" resultType="xyz.kbws.model.vo.VideoPostVO">
         SELECT v.*
         <if test="query.queryCount">
             ,
