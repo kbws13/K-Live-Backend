@@ -96,6 +96,7 @@ public class CreateCenterController {
                 videoPostQueryRequest.setExcludeStatus(list);
             }
         }
+        videoPostQueryRequest.setQueryUserInfo(false);
         List<VideoPostVO> record = videoPostMapper.loadVideoPost(videoPostQueryRequest, userVO.getId());
         Page<VideoPostVO> res = new Page<>();
         res.setRecords(record);

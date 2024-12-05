@@ -42,9 +42,17 @@
             c.collectCount,
             c.recommendType
         </if>
+        <if test="query.queryUserInfo">
+            ,
+            u.nickName,
+            u.avatar
+        </if>
         FROM videoPost v
         <if test="query.queryCount">
             LEFT JOIN video c ON c.id = v.id
+        </if>
+        <if test="query.queryUserInfo">
+            LEFT JOIN user u ON u.id = v.id
         </if>
         where v.userId = #{userId}
         <if test="query.status != null">

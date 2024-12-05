@@ -26,6 +26,11 @@ public class User implements Serializable {
     private String nickName;
 
     /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
      * 邮箱
      */
     private String email;

@@ -1,5 +1,6 @@
 package xyz.kbws.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONArray;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.config.AppConfig;
+import xyz.kbws.config.SystemSetting;
 import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.FileConstant;
 import xyz.kbws.constant.MqConstant;
@@ -20,6 +22,8 @@ import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoFilePostMapper;
 import xyz.kbws.mapper.VideoPostMapper;
+import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.VideoFileTransferResultEnum;
@@ -29,7 +33,9 @@ import xyz.kbws.model.vo.UploadingFileVO;
 import xyz.kbws.rabbitmq.MessageProducer;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoFilePostService;
+import xyz.kbws.service.VideoFileService;
 import xyz.kbws.service.VideoPostService;
+import xyz.kbws.service.VideoService;
 import xyz.kbws.utils.FFmpegUtil;
 
 import javax.annotation.Resource;
@@ -50,6 +56,12 @@ import java.util.stream.Collectors;
 @Service
 public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost>
         implements VideoPostService {
+    
+    @Resource
+    private VideoService videoService;
+
+    @Resource
+    private VideoFileService videoFileService;
 
     @Resource
     private VideoFilePostService videoFilePostService;
@@ -221,6 +233,58 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
                 this.update(updateWrapper);
             }
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void auditVideo(String videoId, Integer status, String reason) {
+        VideoStatusEnum videoStatusEnum = VideoStatusEnum.getEnumByValue(status);
+        if (videoStatusEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该参数不存在");
+        }
+        QueryWrapper<VideoPost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", VideoStatusEnum.STATUS2.getValue());
+        queryWrapper.eq("id", videoId);
+        int auditCount = Math.toIntExact(this.count(queryWrapper));
+        if (auditCount == 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "审核失败，请稍后重试");
+        }
+        UpdateWrapper<VideoFilePost> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("videoId", videoId);
+        updateWrapper.set("updateType", VideoFileTypeEnum.NO_UPDATE.getValue());
+        videoFilePostService.update(updateWrapper);
+
+        if (videoStatusEnum == VideoStatusEnum.STATUS4) {
+            return;
+        }
+        VideoPost videoPost = this.getById(videoId);
+        Video dbVideo = videoService.getById(videoId);
+        if (dbVideo == null) {
+            // 第一次过审
+            SystemSetting systemSetting = redisComponent.getSystemSetting();
+            // TODO 给用户加硬币
+        }
+        // 更新发布信息到正式表
+        BeanUtil.copyProperties(videoPost, dbVideo);
+        videoService.saveOrUpdate(dbVideo);
+        // 更新视频信息到正式表 先删除再添加
+        QueryWrapper<VideoFile> fileQueryWrapper = new QueryWrapper<>();
+        fileQueryWrapper.eq("videoId", videoId);
+        List<VideoFile> deleteFileList = videoFileService.list(fileQueryWrapper);
+        videoFileService.remove(fileQueryWrapper);
+
+        QueryWrapper<VideoFilePost> videoFilePostQueryWrapper = new QueryWrapper<>();
+        videoFilePostQueryWrapper.eq("videoId", videoId);
+        List<VideoFilePost> list = videoFilePostService.list(videoFilePostQueryWrapper);
+        List<VideoFile> videoFiles = BeanUtil.copyToList(list, VideoFile.class);
+        videoFileService.saveBatch(videoFiles);
+
+        // 删除文件
+        List<String> delFilePathList = deleteFileList.stream().map(VideoFile::getFilePath).collect(Collectors.toList());
+        // 发送删除文件消息到消息队列
+        JSONArray jsonArray = JSONUtil.parseArray(delFilePathList);
+        messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.DEL_FILE_ROUTING_KEY, jsonArray.toString());
+        // TODO 保存信息到 ES
     }
 
     private void coverVideo2TS(String completeVideo) {

@@ -18,4 +18,6 @@ public interface VideoPostService extends IService<VideoPost> {
     void updateVideoPost(VideoPost videoPost, List<VideoFilePost> videoFilePosts);
 
     void transferVideoFile(VideoFilePost videoFilePost);
+
+    void auditVideo(String videoId, Integer status, String reason);
 }

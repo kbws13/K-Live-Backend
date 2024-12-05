@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.User">
             <id property="id" column="id" jdbcType="VARCHAR"/>
             <result property="nickName" column="nickName" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
             <result property="email" column="email" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
             <result property="sex" column="sex" jdbcType="TINYINT"/>
@@ -26,8 +27,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,nickName,email,
-        password,sex,birthday,
+        id,nickName,avatar,email,
+        `password`,sex,birthday,
         school,personIntroduction,lastLoginTime,
         lastLoginIp,userRole,noticeInfo,
         totalCoinCount,currentCoinCount,theme,

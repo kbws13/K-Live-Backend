@@ -6,6 +6,7 @@ create table user
 (
     id                 varchar(10) primary key comment '用户 id',
     nickName           varchar(20)                            not null comment '昵称',
+    avatar             varchar(100)                           null comment '头像',
     email              varchar(150)                           not null comment '邮箱',
     password           varchar(50)                            not null comment '密码',
     sex                tinyint(1) comment '0:女 1:男 2:未知',
@@ -64,7 +65,7 @@ create table videoPost
 create table videoFilePost
 (
     fileId         varchar(20) primary key not null comment '文件 id',
-    uploadId      varchar(15)             not null comment '上传 id',
+    uploadId       varchar(15)             not null comment '上传 id',
     userId         varchar(10)             not null comment '用户 id',
     videoId        varchar(10)             not null comment '视频 id',
     fileIndex      int                     not null comment '文件索引',

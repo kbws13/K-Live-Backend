@@ -50,6 +50,16 @@ public class VideoPostVO extends VideoPost implements Serializable {
     private Integer recommendType;
 
     /**
+     * 用户昵称
+     */
+    private String nickName;
+
+    /**
+     * 用户头像
+     */
+    private String avatar;
+
+    /**
      * 当前状态
      */
     private String statusName;

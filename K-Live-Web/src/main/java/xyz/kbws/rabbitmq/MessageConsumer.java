@@ -4,7 +4,6 @@ import cn.hutool.json.JSONUtil;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -19,7 +18,6 @@ import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.service.VideoPostService;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
