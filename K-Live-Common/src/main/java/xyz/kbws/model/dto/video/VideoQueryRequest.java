@@ -12,16 +12,12 @@ import java.io.Serializable;
  */
 @Data
 public class VideoQueryRequest extends PageRequest implements Serializable {
+    private static final long serialVersionUID = -5819807148578440459L;
     /**
      * 父分类 id
      */
     private Integer parentCategoryId;
-
     private Integer categoryId;
-
     private Boolean queryUserInfo;
-
     private Integer recommendType;
-
-    private static final long serialVersionUID = -5819807148578440459L;
 }

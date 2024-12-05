@@ -5,14 +5,14 @@
 <mapper namespace="xyz.kbws.mapper.VideoFileMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.VideoFile">
-            <id property="fileId" column="fileId" jdbcType="VARCHAR"/>
-            <result property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
-            <result property="fileIndex" column="fileIndex" jdbcType="INTEGER"/>
-            <result property="fileName" column="fileName" jdbcType="VARCHAR"/>
-            <result property="fileSize" column="fileSize" jdbcType="BIGINT"/>
-            <result property="filePath" column="filePath" jdbcType="VARCHAR"/>
-            <result property="duration" column="duration" jdbcType="INTEGER"/>
+        <id property="fileId" column="fileId" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
+        <result property="fileIndex" column="fileIndex" jdbcType="INTEGER"/>
+        <result property="fileName" column="fileName" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="fileSize" jdbcType="BIGINT"/>
+        <result property="filePath" column="filePath" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">

@@ -14,19 +14,12 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SystemSetting implements Serializable {
 
-    private Integer registerCoinCount = 10;
-
-    private Integer postVideoCoinCount = 5;
-
-    private Integer videoSize = 20;
-
-    private Integer videoPCount = 10;
-
-    private Integer videoCount = 10;
-
-    private Integer commentCount = 20;
-
-    private Integer danmuCount = 20;
-
     private static final long serialVersionUID = 2083861547160710661L;
+    private Integer registerCoinCount = 10;
+    private Integer postVideoCoinCount = 5;
+    private Integer videoSize = 20;
+    private Integer videoPCount = 10;
+    private Integer videoCount = 10;
+    private Integer commentCount = 20;
+    private Integer danmuCount = 20;
 }

@@ -5,29 +5,29 @@
 <mapper namespace="xyz.kbws.mapper.VideoMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.Video">
-            <id property="id" column="id" jdbcType="VARCHAR"/>
-            <result property="cover" column="cover" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="categoryId" column="categoryId" jdbcType="INTEGER"/>
-            <result property="parentCategoryId" column="parentCategoryId" jdbcType="INTEGER"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
-            <result property="postType" column="postType" jdbcType="TINYINT"/>
-            <result property="originInfo" column="originInfo" jdbcType="VARCHAR"/>
-            <result property="tags" column="tags" jdbcType="VARCHAR"/>
-            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
-            <result property="interaction" column="interaction" jdbcType="VARCHAR"/>
-            <result property="duration" column="duration" jdbcType="INTEGER"/>
-            <result property="playCount" column="playCount" jdbcType="INTEGER"/>
-            <result property="likeCount" column="likeCount" jdbcType="INTEGER"/>
-            <result property="danmuCount" column="danmuCount" jdbcType="INTEGER"/>
-            <result property="commentCount" column="commentCount" jdbcType="INTEGER"/>
-            <result property="coinCount" column="coinCount" jdbcType="INTEGER"/>
-            <result property="collectCount" column="collectCount" jdbcType="INTEGER"/>
-            <result property="recommendType" column="recommendType" jdbcType="TINYINT"/>
-            <result property="lastPlayTime" column="lastPlayTime" jdbcType="TIMESTAMP"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="cover" column="cover" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="categoryId" jdbcType="INTEGER"/>
+        <result property="parentCategoryId" column="parentCategoryId" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="postType" column="postType" jdbcType="TINYINT"/>
+        <result property="originInfo" column="originInfo" jdbcType="VARCHAR"/>
+        <result property="tags" column="tags" jdbcType="VARCHAR"/>
+        <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+        <result property="interaction" column="interaction" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="INTEGER"/>
+        <result property="playCount" column="playCount" jdbcType="INTEGER"/>
+        <result property="likeCount" column="likeCount" jdbcType="INTEGER"/>
+        <result property="danmuCount" column="danmuCount" jdbcType="INTEGER"/>
+        <result property="commentCount" column="commentCount" jdbcType="INTEGER"/>
+        <result property="coinCount" column="coinCount" jdbcType="INTEGER"/>
+        <result property="collectCount" column="collectCount" jdbcType="INTEGER"/>
+        <result property="recommendType" column="recommendType" jdbcType="TINYINT"/>
+        <result property="lastPlayTime" column="lastPlayTime" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">

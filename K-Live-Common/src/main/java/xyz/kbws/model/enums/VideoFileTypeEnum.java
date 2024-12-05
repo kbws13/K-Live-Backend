@@ -10,8 +10,7 @@ import lombok.Getter;
 @Getter
 public enum VideoFileTypeEnum {
     NO_UPDATE("无更新", 0),
-    UPDATE("有更新", 1)
-    ;
+    UPDATE("有更新", 1);
 
     private final String text;
 

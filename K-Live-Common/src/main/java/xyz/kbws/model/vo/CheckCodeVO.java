@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Data
 public class CheckCodeVO implements Serializable {
 
-    private String checkCode;
-
-    private String checkCodeKey;
-
     private static final long serialVersionUID = 4081290697544567030L;
+    private String checkCode;
+    private String checkCodeKey;
 }

@@ -12,10 +12,9 @@ import java.io.Serializable;
 @Data
 public class BaseResponse<T> implements Serializable {
 
+    private static final long serialVersionUID = -8140209322969150545L;
     private int code;
-
     private T data;
-
     private String message;
 
     public BaseResponse(int code, T data, String message) {
@@ -31,6 +30,4 @@ public class BaseResponse<T> implements Serializable {
     public BaseResponse(ErrorCode errorCode) {
         this(errorCode.getCode(), null, errorCode.getMessage());
     }
-
-    private static final long serialVersionUID = -8140209322969150545L;
 }

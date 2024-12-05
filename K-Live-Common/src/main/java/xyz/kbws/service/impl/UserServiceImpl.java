@@ -23,13 +23,13 @@ import javax.annotation.Resource;
 import java.util.Date;
 
 /**
-* @author fangyuan
-* @description 针对表【user(用户表)】的数据库操作Service实现
-* @createDate 2024-11-24 22:14:25
-*/
+ * @author fangyuan
+ * @description 针对表【user(用户表)】的数据库操作Service实现
+ * @createDate 2024-11-24 22:14:25
+ */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService {
+        implements UserService {
 
     @Resource
     private RedisComponent redisComponent;

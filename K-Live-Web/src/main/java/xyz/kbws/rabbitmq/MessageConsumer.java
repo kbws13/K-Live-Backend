@@ -37,6 +37,7 @@ public class MessageConsumer {
 
     /**
      * 监听并处理视频转码消息
+     *
      * @param message
      * @param channel
      * @param deliveryTag

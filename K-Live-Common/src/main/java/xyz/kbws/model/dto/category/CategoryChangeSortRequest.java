@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Data
 public class CategoryChangeSortRequest implements Serializable {
 
-    private Integer parentCategoryId;
-
-    private String categoryIds;
-
     private static final long serialVersionUID = -8758349403097026855L;
+    private Integer parentCategoryId;
+    private String categoryIds;
 }

@@ -13,20 +13,14 @@ import java.util.List;
  */
 @Data
 public class VideoPostQueryRequest extends PageRequest implements Serializable {
+    private static final long serialVersionUID = -5819807148578440459L;
     /**
      * 父分类 id
      */
     private Integer parentCategoryId;
-
     private Integer status;
-
     private String videoName;
-
     private Boolean queryCount;
-
     private Boolean queryUserInfo;
-
     private List<Integer> excludeStatus;
-
-    private static final long serialVersionUID = -5819807148578440459L;
 }

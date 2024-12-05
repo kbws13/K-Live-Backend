@@ -14,17 +14,11 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UploadingFileVO implements Serializable {
 
-    private String uploadId;
-
-    private String fileName;
-
-    private Integer chunkIndex;
-
-    private Integer chunks;
-
-    private Long fileSize = 0L;
-
-    private String filePath;
-
     private static final long serialVersionUID = 4117680417301377511L;
+    private String uploadId;
+    private String fileName;
+    private Integer chunkIndex;
+    private Integer chunks;
+    private Long fileSize = 0L;
+    private String filePath;
 }

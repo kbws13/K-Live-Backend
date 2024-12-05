@@ -13,13 +13,10 @@ import java.io.Serializable;
 @Data
 public class VideoPostAuditRequest implements Serializable {
 
+    private static final long serialVersionUID = -5281628727697838530L;
     @NotEmpty(message = "视频 id 不能为空")
     private String videoId;
-
     @NotEmpty(message = "状态不能为空")
     private Integer status;
-
     private String reason;
-
-    private static final long serialVersionUID = -5281628727697838530L;
 }

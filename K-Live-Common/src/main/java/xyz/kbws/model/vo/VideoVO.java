@@ -13,9 +13,7 @@ import java.io.Serializable;
 @Data
 public class VideoVO extends Video implements Serializable {
 
-    private String nickName;
-
-    private String avatar;
-
     private static final long serialVersionUID = 4267928873063098972L;
+    private String nickName;
+    private String avatar;
 }

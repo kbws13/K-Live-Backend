@@ -14,12 +14,10 @@ import java.io.Serializable;
 @Data
 public class UserLoginRequest implements Serializable {
 
+    private static final long serialVersionUID = 4146569412360093197L;
     @NotBlank(message = "邮箱不能为空")
     @Email(message = "邮箱格式不正确")
     private String email;
-
     @NotBlank(message = "密码不能为空")
     private String password;
-
-    private static final long serialVersionUID = 4146569412360093197L;
 }

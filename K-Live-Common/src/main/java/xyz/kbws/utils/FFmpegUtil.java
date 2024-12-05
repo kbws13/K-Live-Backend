@@ -23,6 +23,7 @@ public class FFmpegUtil {
 
     /**
      * 创建缩略图
+     *
      * @param filePath 文件路径
      */
     public void createImageThumbnail(String filePath) {
@@ -33,6 +34,7 @@ public class FFmpegUtil {
 
     /**
      * 获取视频播放时长
+     *
      * @param completeVideo 合并完成的视频路径
      * @return 视频播放时长(秒)
      */
@@ -49,6 +51,7 @@ public class FFmpegUtil {
 
     /**
      * 获取视频编码
+     *
      * @param completeVideo 视频路径
      * @return 视频编码
      */
@@ -64,7 +67,8 @@ public class FFmpegUtil {
 
     /**
      * 将视频文件转成 MP4 格式
-     * @param newFileName 新文件名字
+     *
+     * @param newFileName   新文件名字
      * @param videoFilePath 视频文件的路径
      */
     public void coverHevc2Mp4(String newFileName, String videoFilePath) {
@@ -75,7 +79,8 @@ public class FFmpegUtil {
 
     /**
      * 对视频进行切片
-     * @param tsFolder TS 文件目录
+     *
+     * @param tsFolder      TS 文件目录
      * @param videoFilePath 视频路径
      */
     public void coverVideo2TS(File tsFolder, String videoFilePath) {

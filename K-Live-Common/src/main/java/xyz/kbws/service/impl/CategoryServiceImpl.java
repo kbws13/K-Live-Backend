@@ -20,18 +20,17 @@ import xyz.kbws.service.CategoryService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【category(分类表)】的数据库操作Service实现
-* @createDate 2024-11-27 00:11:01
-*/
+ * @author fangyuan
+ * @description 针对表【category(分类表)】的数据库操作Service实现
+ * @createDate 2024-11-27 00:11:01
+ */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
-    implements CategoryService {
-    
+        implements CategoryService {
+
     @Resource
     private CategoryMapper categoryMapper;
 

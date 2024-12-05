@@ -12,30 +12,25 @@ import java.io.Serializable;
 @Data
 public class CategoryQueryRequest implements Serializable {
 
+    private static final long serialVersionUID = 1399995342149613171L;
     /**
      * 分类编码
      */
     private String code;
-
     /**
      * 分类名称
      */
     private String name;
-
     /**
      * 父级分类 id
      */
     private Integer parentCategoryId;
-
     /**
      * 排序号
      */
     private Integer sort;
-
     /**
      * 是否转换成树形
      */
     private Boolean coverLine2Tree;
-
-    private static final long serialVersionUID = 1399995342149613171L;
 }

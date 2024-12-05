@@ -9,11 +9,11 @@ import xyz.kbws.model.vo.VideoPostVO;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【videoPost(已发布视频信息表)】的数据库操作Mapper
-* @createDate 2024-11-28 20:36:20
-* @Entity generator.domain.Videopost
-*/
+ * @author fangyuan
+ * @description 针对表【videoPost(已发布视频信息表)】的数据库操作Mapper
+ * @createDate 2024-11-28 20:36:20
+ * @Entity generator.domain.Videopost
+ */
 public interface VideoPostMapper extends BaseMapper<VideoPost> {
 
     List<VideoPostVO> loadVideoPost(@Param("query") VideoPostQueryRequest query, @Param("userId") String userId);

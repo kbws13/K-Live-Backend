@@ -9,7 +9,7 @@ import xyz.kbws.common.ErrorCode;
  * @description: 自定义异常类
  */
 @Getter
-public class BusinessException extends RuntimeException{
+public class BusinessException extends RuntimeException {
     /**
      * 错误码
      */

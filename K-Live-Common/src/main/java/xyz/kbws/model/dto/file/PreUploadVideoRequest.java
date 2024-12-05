@@ -10,11 +10,9 @@ import java.io.Serializable;
  * @description: 准备上传视频请求
  */
 @Data
-public class PreUploadVideoRequest  implements Serializable {
-
-    private String fileName;
-
-    private Integer chunks;
+public class PreUploadVideoRequest implements Serializable {
 
     private static final long serialVersionUID = 7716993592392586645L;
+    private String fileName;
+    private Integer chunks;
 }

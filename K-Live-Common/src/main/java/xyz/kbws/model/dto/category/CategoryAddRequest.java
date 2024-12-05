@@ -12,30 +12,25 @@ import java.io.Serializable;
 @Data
 public class CategoryAddRequest implements Serializable {
 
+    private static final long serialVersionUID = -891811301968801613L;
     /**
      * 分类编码
      */
     private String code;
-
     /**
      * 分类名称
      */
     private String name;
-
     /**
      * 父级分类 id
      */
     private Integer parentCategoryId;
-
     /**
      * 图标
      */
     private String icon;
-
     /**
      * 背景图
      */
     private String background;
-
-    private static final long serialVersionUID = -891811301968801613L;
 }

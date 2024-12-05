@@ -5,8 +5,6 @@ import cn.hutool.jwt.signers.JWTSignerUtil;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.exception.ThrowUtils;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author kbws
  * @date 2024/11/25

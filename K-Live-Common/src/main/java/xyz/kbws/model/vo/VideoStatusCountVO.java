@@ -12,11 +12,8 @@ import java.io.Serializable;
 @Data
 public class VideoStatusCountVO implements Serializable {
 
-    private Integer auditPassCount;
-
-    private Integer auditFailCount;
-
-    private Integer inProcessCount;
-
     private static final long serialVersionUID = -4700647550779646475L;
+    private Integer auditPassCount;
+    private Integer auditFailCount;
+    private Integer inProcessCount;
 }

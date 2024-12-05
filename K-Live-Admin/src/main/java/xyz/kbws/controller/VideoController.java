@@ -14,7 +14,6 @@ import xyz.kbws.constant.UserConstant;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAuditRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
-import xyz.kbws.model.enums.VideoStatusEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoPostVO;
 import xyz.kbws.redis.RedisComponent;
@@ -24,8 +23,6 @@ import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

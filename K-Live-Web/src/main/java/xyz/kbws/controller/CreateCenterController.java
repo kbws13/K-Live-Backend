@@ -85,7 +85,7 @@ public class CreateCenterController {
     @AuthCheck
     @PostMapping("/loadVideoPost")
     public BaseResponse<Page<VideoPostVO>> loadVideoPost(@RequestBody VideoPostQueryRequest videoPostQueryRequest,
-                                                       HttpServletRequest request) {
+                                                         HttpServletRequest request) {
         String token = request.getHeader("token");
         UserVO userVO = redisComponent.getUserVO(token);
         Integer status = videoPostQueryRequest.getStatus();

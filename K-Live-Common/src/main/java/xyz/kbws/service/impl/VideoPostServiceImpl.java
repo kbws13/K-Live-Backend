@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 @Service
 public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost>
         implements VideoPostService {
-    
+
     @Resource
     private VideoService videoService;
 

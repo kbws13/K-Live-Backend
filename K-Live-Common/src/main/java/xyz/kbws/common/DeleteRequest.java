@@ -12,10 +12,9 @@ import java.io.Serializable;
 @Data
 public class DeleteRequest implements Serializable {
 
+    private static final long serialVersionUID = -3514450647264804921L;
     /**
      * id
      */
     private Integer id;
-
-    private static final long serialVersionUID = -3514450647264804921L;
 }
