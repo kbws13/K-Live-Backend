@@ -65,6 +65,8 @@
             and v.status not in (<foreach collection="query.excludeStatus" separator="," item="item">#{item}</foreach> )
         </if>
         order by v.createTime desc
-        LIMIT #{query.pageSize} OFFSET #{query.current}
+        <if test="videoPostQueryRequest.pageSize != null">
+            LIMIT #{query.pageSize} OFFSET #{query.current}
+        </if>
     </select>
 </mapper>

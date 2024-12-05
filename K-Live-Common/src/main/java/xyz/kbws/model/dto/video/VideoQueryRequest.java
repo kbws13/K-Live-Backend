@@ -1,10 +1,9 @@
-package xyz.kbws.model.dto.videoPost;
+package xyz.kbws.model.dto.video;
 
 import lombok.Data;
 import xyz.kbws.common.PageRequest;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author kbws
@@ -12,21 +11,17 @@ import java.util.List;
  * @description: 查询稿件请求
  */
 @Data
-public class VideoPostQueryRequest extends PageRequest implements Serializable {
+public class VideoQueryRequest extends PageRequest implements Serializable {
     /**
      * 父分类 id
      */
     private Integer parentCategoryId;
 
-    private Integer status;
-
-    private String videoName;
-
-    private Boolean queryCount;
+    private Integer categoryId;
 
     private Boolean queryUserInfo;
 
-    private List<Integer> excludeStatus;
+    private Integer recommendType;
 
     private static final long serialVersionUID = -5819807148578440459L;
 }

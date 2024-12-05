@@ -40,4 +40,30 @@
         collectCount,recommendType,lastPlayTime,
         createTime,updateTime
     </sql>
+
+    <select id="queryList" resultType="xyz.kbws.model.vo.VideoVO">
+        select v.*
+        <if test="videoQueryRequest.queryUserInfo == true">
+            ,
+            u.nickName,
+            u.avatar
+        </if>
+        from video v
+        <if test="videoQueryRequest.queryUserInfo != null">
+            left join user u on u.id = v.userId
+        </if>
+        where recommendType = #{videoQueryRequest.recommendType}
+        <if test="videoQueryRequest.parentCategoryId != null">
+            and parentCategoryId = #{videoQueryRequest.parentCategoryId}
+        </if>
+        <if test="videoQueryRequest.categoryId != null">
+            and categoryId = #{videoQueryRequest.categoryId}
+        </if>
+        <if test="videoQueryRequest.sortField != null">
+            order by #{videoQueryRequest.sortField} #{videoQueryRequest.sortOrder}
+        </if>
+        <if test="videoQueryRequest.pageSize != null">
+            limit #{videoQueryRequest.pageSize} offset #{videoQueryRequest.current}
+        </if>
+    </select>
 </mapper>
