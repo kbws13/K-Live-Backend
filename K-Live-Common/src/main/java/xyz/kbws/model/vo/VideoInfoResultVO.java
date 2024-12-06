@@ -4,6 +4,7 @@ import lombok.Data;
 import xyz.kbws.model.entity.Video;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author kbws
@@ -13,6 +14,9 @@ import java.io.Serializable;
 @Data
 public class VideoInfoResultVO implements Serializable {
 
-    private static final long serialVersionUID = -6559627645429069138L;
     private Video video;
+
+    private List<Integer> userActionList;
+
+    private static final long serialVersionUID = -6559627645429069138L;
 }

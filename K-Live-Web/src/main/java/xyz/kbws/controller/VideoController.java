@@ -12,6 +12,7 @@ import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
+import xyz.kbws.model.dto.video.VideoReportRequest;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.enums.VideoRecommendTypeEnum;
@@ -23,6 +24,7 @@ import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,8 +85,10 @@ public class VideoController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "该视频不存在");
         }
         // TODO 获取用户点赞、投币、收藏
+        List<Integer> list = new ArrayList<>();
         VideoInfoResultVO videoInfoResultVO = new VideoInfoResultVO();
         videoInfoResultVO.setVideo(video);
+        videoInfoResultVO.setUserActionList(list);
         return ResultUtils.success(videoInfoResultVO);
     }
 
@@ -96,5 +100,11 @@ public class VideoController {
         queryWrapper.orderByAsc("fileIndex");
         List<VideoFile> list = videoFileService.list(queryWrapper);
         return ResultUtils.success(list);
+    }
+
+    @ApiOperation(value = "上报在线观看人数")
+    @PostMapping("/reportVideoPlyaOnline")
+    public BaseResponse<Integer> repostVideoPlayOnline(@RequestBody VideoReportRequest videoReportRequest) {
+        return ResultUtils.success(10);
     }
 }

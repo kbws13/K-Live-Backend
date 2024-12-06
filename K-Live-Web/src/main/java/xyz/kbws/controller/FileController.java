@@ -19,9 +19,11 @@ import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.FileConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.model.dto.file.PreUploadVideoRequest;
+import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.vo.UploadingFileVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
+import xyz.kbws.service.VideoFileService;
 import xyz.kbws.utils.FFmpegUtil;
 
 import javax.annotation.Resource;
@@ -44,6 +46,9 @@ import java.io.OutputStream;
 @RestController
 @RequestMapping("/file")
 public class FileController {
+
+    @Resource
+    private VideoFileService videoFileService;
 
     @Resource
     private RedisComponent redisComponent;
@@ -140,6 +145,25 @@ public class FileController {
         }
         String res = FileConstant.FILE_COVER + date + "/" + realFileName;
         return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "获取视频 m3u8 文件")
+    @GetMapping("/videoResource/{fileId}")
+    public void videoResource(@PathVariable("fileId") @NotEmpty(message = "文件 id 不能为空") String fileId, HttpServletResponse response) {
+        VideoFile videoFile = videoFileService.getById(fileId);
+        String filePath = videoFile.getFilePath();
+        readFile(response, filePath + File.separator + FileConstant.M3U8_NAME);
+        // TODO 更新视频的观看信息
+    }
+
+    @ApiOperation(value = "获取视频 TS 文件")
+    @GetMapping("/videoResourceTS/{fileId}/{ts}")
+    public void videoResourceTS(@PathVariable("fileId") @NotEmpty(message = "文件 id 不能为空") String fileId,
+                                @PathVariable("ts") @NotEmpty(message = "ts 不能为空") String ts,
+                                HttpServletResponse response) {
+        VideoFile videoFile = videoFileService.getById(fileId);
+        String filePath = videoFile.getFilePath();
+        readFile(response, filePath + File.separator + ts);
     }
 
     protected void readFile(HttpServletResponse response, String filePath) {

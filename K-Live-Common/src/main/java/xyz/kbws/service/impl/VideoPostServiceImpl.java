@@ -204,7 +204,7 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
             Integer duration = fFmpegUtil.getVideoDuration(completeVideo);
             videoFilePost.setDuration(duration);
             videoFilePost.setFileSize(new File(completeVideo).length());
-            videoFilePost.setFilePath(FileConstant.FILE_FOLDER + uploadVideoFile.getFilePath());
+            videoFilePost.setFilePath(FileConstant.FILE_VIDEO + uploadVideoFile.getFilePath());
             videoFilePost.setTransferResult(VideoFileTransferResultEnum.SUCCESS.getValue());
             // 将视频转成 TS 分片
             this.coverVideo2TS(completeVideo);
