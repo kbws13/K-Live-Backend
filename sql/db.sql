@@ -124,3 +124,55 @@ create table videoFile
     duration  int          default null comment '持续时间(秒)',
     index idx_video_id (videoId)
 ) comment '视频文件信息表';
+
+create table action
+(
+    id          int primary key auto_increment comment 'id',
+    videoId     varchar(10)                        not null comment '视频 id',
+    videoUserId varchar(10)                        not null comment '视频用户 id',
+    commentId   int                                not null comment '评论 id',
+    actionType  tinyint(1)                         not null comment '0: 评论喜欢点赞 1:讨厌评论 2:视频点赞 3:视频收藏 4:视频投币',
+    count       int                                not null comment '数量',
+    userId      varchar(10)                        not null comment '用户 id',
+    actionTime  dateTime default CURRENT_TIMESTAMP not null comment '操作时间',
+    unique key idx_key_video_comment_type_user (videoId, commentId, actionType, userId),
+    key idx_video_id (videoId),
+    key idx_user_id (userId),
+    key idx_type (actionType),
+    key idx_action_time (actionTime)
+) comment '用户行为 点赞、评论';
+
+create table danmu
+(
+    id       int primary key auto_increment comment 'id',
+    videoId  varchar(10)                            not null comment '视频 id',
+    fileId   varchar(20)                            not null comment '视频文件 id',
+    userId   varchar(15)                            not null comment '用户 id',
+    postTime datetime     default CURRENT_TIMESTAMP not null comment '发送时间',
+    text     varchar(300) default null comment '内容',
+    mode     tinyint(1)   default null comment '弹幕位置',
+    color    varchar(10)  default null comment '颜色',
+    time     int          default null comment '展示时间',
+    key idx_file_id (fileId)
+) comment '弹幕表';
+
+create table videoComment
+(
+    id              int primary key auto_increment comment 'id',
+    parentCommentId int          not null comment '父级评论 id',
+    videoId         varchar(10)  not null comment '视频 id',
+    videoUserId     varchar(10)  not null comment '视频用户 id',
+    content         varchar(500) not null comment '回复内容',
+    imgPath         varchar(150) default null comment '图片内容',
+    userId          varchar(15)  not null comment '用户 id',
+    replyUserId     varchar(15)  default null comment '回复人 id',
+    topType         tinyint(4)   default 0 comment '0: 未置顶 1:已置顶',
+    postTime        datetime     not null comment '发布时间',
+    likeCount       int          default 0 comment '喜欢数量',
+    hateCount       int          default 0 comment '讨厌数量',
+    key idx_post_time (postTime),
+    key idx_top (topType),
+    key idx_p_id (parentCommentId),
+    key idx_user_id (userId),
+    key idx_video_id (videoId)
+) comment '评论表';
