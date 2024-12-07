@@ -1,6 +1,7 @@
 package xyz.kbws.model.vo;
 
 import lombok.Data;
+import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ public class VideoInfoResultVO implements Serializable {
 
     private Video video;
 
-    private List<Integer> userActionList;
+    private List<Action> userActionList;
 
     private static final long serialVersionUID = -6559627645429069138L;
 }

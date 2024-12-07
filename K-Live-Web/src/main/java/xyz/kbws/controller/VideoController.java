@@ -13,18 +13,24 @@ import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
 import xyz.kbws.model.dto.video.VideoReportRequest;
+import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
+import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.enums.VideoRecommendTypeEnum;
+import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoInfoResultVO;
 import xyz.kbws.model.vo.VideoVO;
 import xyz.kbws.redis.RedisComponent;
+import xyz.kbws.service.ActionService;
 import xyz.kbws.service.VideoFileService;
 import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +48,9 @@ public class VideoController {
 
     @Resource
     private VideoFileService videoFileService;
+
+    @Resource
+    private ActionService actionService;
 
     @Resource
     private VideoMapper videoMapper;
@@ -79,13 +88,23 @@ public class VideoController {
 
     @ApiOperation(value = "获取视频信息")
     @GetMapping("/getVideoInfo")
-    public BaseResponse<VideoInfoResultVO> getVideoInfo(@NotEmpty(message = "视频 id 不能为空") String videoId) {
+    public BaseResponse<VideoInfoResultVO> getVideoInfo(@NotEmpty(message = "视频 id 不能为空") String videoId, HttpServletRequest request) {
         Video video = videoService.getById(videoId);
         if (video == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "该视频不存在");
         }
-        // TODO 获取用户点赞、投币、收藏
-        List<Integer> list = new ArrayList<>();
+        // 获取用户点赞、投币、收藏
+        List<Action> list = new ArrayList<>();
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        if (userVO != null) {
+            QueryWrapper<Action> queryWrapper = new QueryWrapper<>();
+            List<Integer> types = Arrays.asList(UserActionTypeEnum.VIDEO_LIKE.getValue(), UserActionTypeEnum.VIDEO_COLLECT.getValue(), UserActionTypeEnum.VIDEO_COIN.getValue());
+            queryWrapper.eq("videoId", videoId)
+                    .eq("userId", userVO.getId())
+                    .in("actionType", types);
+            list = actionService.list(queryWrapper);
+        }
         VideoInfoResultVO videoInfoResultVO = new VideoInfoResultVO();
         videoInfoResultVO.setVideo(video);
         videoInfoResultVO.setUserActionList(list);

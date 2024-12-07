@@ -10,4 +10,5 @@ import xyz.kbws.model.entity.Action;
 */
 public interface ActionService extends IService<Action> {
 
+    void saveAction(Action action);
 }
