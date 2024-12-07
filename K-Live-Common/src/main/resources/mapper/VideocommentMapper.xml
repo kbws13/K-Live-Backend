@@ -18,11 +18,62 @@
             <result property="likeCount" column="likeCount" jdbcType="INTEGER"/>
             <result property="hateCount" column="hateCount" jdbcType="INTEGER"/>
     </resultMap>
+    
+    <resultMap id="BaseResultMapChildren" type="xyz.kbws.model.entity.VideoComment" extends="BaseResultMap">
+        <collection property="children" column="id" select="xyz.kbws.mapper.VideoCommentMapper.selectChildrenComment">
+        </collection>
+    </resultMap>
 
     <sql id="Base_Column_List">
-        id,parentCommentId,videoId,
+        v.id,parentCommentId,videoId,
         videoUserId,content,imgPath,
         userId,replyUserId,topType,
         postTime,likeCount,hateCount
     </sql>
+    
+    <sql id="query_condition">
+        <if test="query.videoId != null and query.videoId != ''">
+            videoId = #{query.videoId}
+        </if>
+        <if test="query.parentCommandId != null and query.parentCommandId != ''">
+            and parentCommandId = #{query.parentCommandId}
+        </if>
+        <if test="query.topType != null and query.topType != ''">
+            and topType = #{query.topType}
+        </if>
+    </sql>
+
+    <select id="selectList" resultType="xyz.kbws.model.entity.VideoComment">
+        select
+        <include refid="Base_Column_List" />
+        from videoComment
+        <include refid="query_condition" />
+        <if test="query.sortField != null">
+            order by ${query.sortField}
+        </if>
+        <if test="query.pageSize !=- null">
+            LIMIT #{query.pageSize} OFFSET #{query.current}
+        </if>
+    </select>
+
+    <select id="selectChildrenComment" resultMap="BaseResultMap">
+        select v.*, u.nickName, u.avatar, u2.nickName replyNickName, u2.avatar replyAvatar
+        from videoComment v
+        inner join user u on v.userId = u.id
+        left join user u2 on u2.id = v.replyUserId
+        where parentCommentId = #{commentId} order by v.id asc
+    </select>
+
+    <select id="selectListWithChildren" resultMap="BaseResultMapChildren">
+        select
+        <include refid="Base_Column_List" />, u.nickName, u.avatar
+        from videoComment v left join user u on v.userId = u.id
+        where <include refid="query_condition" />
+        <if test="query.sortField != null">
+            order by ${query.sortField}
+        </if>
+        <if test="query.pageSize !=- null">
+            LIMIT #{query.pageSize} OFFSET #{query.current}
+        </if>
+    </select>
 </mapper>

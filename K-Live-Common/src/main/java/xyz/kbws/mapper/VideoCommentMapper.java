@@ -1,7 +1,11 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.VideoComment;
+import xyz.kbws.model.query.VideoCommentQuery;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +15,9 @@ import xyz.kbws.model.entity.VideoComment;
 */
 public interface VideoCommentMapper extends BaseMapper<VideoComment> {
 
+    List<VideoComment> selectList(@Param("query")VideoCommentQuery query);
+
+    List<VideoComment> selectListWithChildren(@Param("query")VideoCommentQuery query);
 }
 
 

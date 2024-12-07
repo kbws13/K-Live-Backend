@@ -2,6 +2,7 @@ package xyz.kbws.redis;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Component;
 import xyz.kbws.config.AppConfig;
 import xyz.kbws.config.SystemSetting;
@@ -54,6 +55,9 @@ public class RedisComponent {
     }
 
     public UserVO getUserVO(String token) {
+        if (StrUtil.isEmpty(token)) {
+            return null;
+        }
         String userId = JwtUtil.getUserId(token);
         return (UserVO) redisUtils.get(RedisConstant.TOKEN_WEB + userId);
     }

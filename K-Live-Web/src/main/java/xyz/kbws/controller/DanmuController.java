@@ -20,10 +20,13 @@ import xyz.kbws.model.dto.danmu.DanmuLoadRequest;
 import xyz.kbws.model.dto.danmu.DanmuPostRequest;
 import xyz.kbws.model.entity.Danmu;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.vo.UserVO;
+import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.DanmuService;
 import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,13 +46,19 @@ public class DanmuController {
     @Resource
     private VideoService videoService;
 
+    @Resource
+    private RedisComponent redisComponent;
+
     @ApiOperation(value = "发弹幕")
     @AuthCheck
     @PostMapping("/postDanmu")
-    public void postDanmu(@RequestBody DanmuPostRequest danmuPostRequest) {
+    public void postDanmu(@RequestBody DanmuPostRequest danmuPostRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(danmuPostRequest == null, ErrorCode.PARAMS_ERROR);
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
         Danmu danmu = new Danmu();
         BeanUtil.copyProperties(danmuPostRequest, danmu);
+        danmu.setUserId(userVO.getId());
         danmu.setPostTime(DateUtil.date());
         danmuService.saveDanmu(danmu);
     }
