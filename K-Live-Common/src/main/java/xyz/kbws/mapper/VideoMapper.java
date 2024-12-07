@@ -18,6 +18,8 @@ public interface VideoMapper extends BaseMapper<Video> {
 
     List<VideoVO> queryList(@Param("videoQueryRequest") VideoQueryRequest videoQueryRequest);
 
+    void updateCountInfo(@Param("videoId") String videoId, @Param("field") String field, @Param("changeCount") Integer changeCount);
+
 }
 
 

@@ -66,4 +66,12 @@
             limit #{videoQueryRequest.pageSize} offset #{videoQueryRequest.current}
         </if>
     </select>
+
+    <update id="updateCountInfo">
+        update video set ${field} = ${field} + #{changeCount}
+        <if test="field == 'playCount'">
+            , lastPlayTime = now()
+        </if>
+        where id = #{videoId}
+    </update>
 </mapper>
