@@ -1,6 +1,7 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.User;
 
 /**
@@ -11,6 +12,7 @@ import xyz.kbws.model.entity.User;
  */
 public interface UserMapper extends BaseMapper<User> {
 
+    Integer updateCoinCount(@Param("userId") String userId, @Param("changeCount") Integer changeCount);
 }
 
 

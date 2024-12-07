@@ -9,6 +9,7 @@ import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.ActionMapper;
+import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
@@ -28,6 +29,9 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
 
     @Resource
     private VideoMapper videoMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -62,7 +66,26 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
                     // TODO 更新 ES 的收藏数量
                 }
                 break;
-
+            case VIDEO_COIN:
+                if (video.getUserId().equals(action.getUserId())) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "不能给自己投币");
+                }
+                if (dbAction != null) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "不能重复投币");
+                }
+                // 减少自己的硬币
+                int updateCount = userMapper.updateCoinCount(action.getUserId(), -action.getCount());
+                if (updateCount == 0) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "硬币数量不足");
+                }
+                // 给 UP 主增加硬币
+                updateCount = userMapper.updateCoinCount(action.getUserId(), action.getCount());
+                if (updateCount == 0) {
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "投币失败");
+                }
+                this.save(action);
+                videoMapper.updateCountInfo(action.getVideoId(), actionTypeEnum.getField(), action.getCount());
+                break;
         }
     }
 }

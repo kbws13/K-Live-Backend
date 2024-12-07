@@ -26,7 +26,7 @@ public class ActionDoRequest implements Serializable {
     @Min(value = 1)
     private Integer count;
 
-    private Integer commentId;
+    private Integer commentId = 0;
 
     private static final long serialVersionUID = 265659362043769896L;
 }
