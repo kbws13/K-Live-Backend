@@ -176,3 +176,30 @@ create table videoComment
     key idx_user_id (userId),
     key idx_video_id (videoId)
 ) comment '评论表';
+
+create table focus
+(
+    userId      varchar(10) not null comment '用户 id',
+    focusUserId varchar(10) not null comment '用户 id',
+    focusTime   datetime default null comment '关注时间',
+    primary key (userId, focusUserId) using BTREE
+) comment '关注表';
+
+create table series
+(
+    id          int primary key auto_increment comment '合集 id',
+    name        varchar(100) not null comment '合集名称',
+    description varchar(200) default null comment '合集描述',
+    userId      varchar(10)  not null comment '用户 id',
+    sort        tinyint(4)   not null comment '排序',
+    updateTime  datetime     default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    key idx_user_id (userId)
+) comment '视频合集表';
+
+create table seriesContent
+(
+    seriesId int         not null comment '合集 id',
+    videoId  varchar(10) not null comment '视频 id',
+    sort     tinyint(4)  not null comment '排序',
+    primary key (seriesId, videoId) using BTREE
+) comment '视频合集内容表';
