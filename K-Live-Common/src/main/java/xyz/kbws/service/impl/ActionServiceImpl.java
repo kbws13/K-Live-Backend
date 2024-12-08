@@ -10,6 +10,7 @@ import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.ActionMapper;
 import xyz.kbws.mapper.UserMapper;
+import xyz.kbws.mapper.VideoCommentMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
@@ -32,6 +33,9 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private VideoCommentMapper videoCommentMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -85,6 +89,28 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
                 }
                 this.save(action);
                 videoMapper.updateCountInfo(action.getVideoId(), actionTypeEnum.getField(), action.getCount());
+                break;
+            case COMMENT_LIKE:
+            case COMMENT_HATE:
+                UserActionTypeEnum opposeTypeEnum = actionTypeEnum == UserActionTypeEnum.COMMENT_LIKE ? UserActionTypeEnum.COMMENT_HATE : UserActionTypeEnum.COMMENT_LIKE;
+                queryWrapper.clear();
+                queryWrapper.eq("videoId", action.getVideoId())
+                        .eq("commendId", action.getCommentId())
+                        .eq("actionType", opposeTypeEnum.getValue())
+                        .eq("userId", action.getUserId());
+                Action opposeAction = this.getOne(queryWrapper);
+                if (opposeAction != null) {
+                    this.removeById(opposeAction.getId());
+                }
+                if (dbAction != null) {
+                    this.removeById(dbAction.getId());
+                } else {
+                    this.save(action);
+                }
+                changeCount = dbAction == null ? UserConstant.ONE : -UserConstant.ONE;
+                int opposeChangeCount = -changeCount;
+                videoCommentMapper.updateCount(action.getId(), actionTypeEnum.getField(), changeCount,
+                        opposeAction == null ? null : opposeTypeEnum.getField(), opposeChangeCount);
                 break;
         }
     }

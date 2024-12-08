@@ -34,6 +34,7 @@ import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -132,6 +133,36 @@ public class VideoCommentController {
         videoCommentResultVO.setPage(page);
         videoCommentResultVO.setActionList(list);
         return ResultUtils.success(videoCommentResultVO);
+    }
+
+    @ApiOperation(value = "置顶评论")
+    @AuthCheck
+    @PostMapping("/top")
+    public BaseResponse<Boolean> topComment(@NotNull Integer commentId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        boolean res = videoCommentService.topComment(commentId, userVO.getId());
+        return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "取消置顶")
+    @AuthCheck
+    @PostMapping("/cancelTop")
+    public BaseResponse<Boolean>  cancelTopComment(@NotNull Integer commentId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        boolean res = videoCommentService.cancelTopComment(commentId, userVO.getId());
+        return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "删除评论")
+    @AuthCheck
+    @PostMapping("/delete")
+    public BaseResponse<Boolean>  deleteComment(@NotNull Integer commentId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        boolean res = videoCommentService.deleteComment(commentId, userVO.getId());
+        return ResultUtils.success(res);
     }
 
     private List<VideoComment> topComment(String videoId) {

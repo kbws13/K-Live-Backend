@@ -1,8 +1,10 @@
 package xyz.kbws.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
@@ -12,6 +14,7 @@ import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.User;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoComment;
+import xyz.kbws.model.enums.CommentTopTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.query.VideoCommentQuery;
 import xyz.kbws.service.VideoCommentService;
@@ -78,6 +81,58 @@ public class VideoCommentServiceImpl extends ServiceImpl<VideoCommentMapper, Vid
             return videoCommentMapper.selectListWithChildren(query);
         }
         return videoCommentMapper.selectList(query);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean topComment(Integer commentId, String userId) {
+        this.cancelTopComment(commentId, userId);
+        VideoComment comment = this.getById(commentId);
+        comment.setTopType(CommentTopTypeEnum.TOP.getValue());
+        return this.updateById(comment);
+    }
+
+    @Override
+    public Boolean cancelTopComment(Integer commentId, String userId) {
+        VideoComment comment = this.getById(commentId);
+        if (comment == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        Video video = videoMapper.selectById(comment.getVideoId());
+        if (video == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        if (!video.getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        comment.setTopType(CommentTopTypeEnum.NOT_TOP.getValue());
+        return this.updateById(comment);
+    }
+
+    @Override
+    public Boolean deleteComment(Integer commentId, String userId) {
+        VideoComment comment = this.getById(commentId);
+        if (comment == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "该评论不存在");
+        }
+        Video video = videoMapper.selectById(comment.getVideoId());
+        if (video == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论所在视频不存在");
+        }
+        if (!video.getUserId().equals(userId) && !comment.getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "你没有权限删除");
+        }
+        boolean res1 = this.removeById(commentId);
+        boolean res2 = true;
+        if (comment.getParentCommentId() == 0) {
+            // 删除二级评论
+            QueryWrapper<VideoComment> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("parentCommentId", commentId);
+            int changeCount = (int) this.count(queryWrapper);
+            videoMapper.updateCountInfo(video.getId(), UserActionTypeEnum.VIDEO_COMMENT.getField(), -changeCount);
+            res2 = this.remove(queryWrapper);
+        }
+        return res1 & res2;
     }
 }
 

@@ -76,4 +76,12 @@
             LIMIT #{query.pageSize} OFFSET #{query.current}
         </if>
     </select>
+
+    <update id="updateCount">
+        update videoComment set ${field} = ${field} + #{changeCount}
+        <if test="opposeField != null">
+            ,${opposeField} = ${opposeField} + #{opposeChangeCount}
+        </if>
+        where id = #{id}
+    </update>
 </mapper>

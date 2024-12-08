@@ -16,4 +16,10 @@ public interface VideoCommentService extends IService<VideoComment> {
     VideoComment addComment(VideoComment videoComment, Integer replyCommentId);
 
     List<VideoComment> listByParams(VideoCommentQuery query);
+
+    Boolean topComment(Integer commentId, String userId);
+
+    Boolean cancelTopComment(Integer commentId, String userId);
+
+    Boolean deleteComment(Integer commentId, String userId);
 }
