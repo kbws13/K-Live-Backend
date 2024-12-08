@@ -113,4 +113,21 @@ public class RedisComponent {
         }
         return systemSetting;
     }
+
+    public Integer reportVideoPlayOnline(String fileId, String deviceId) {
+        String userPlayOnlineKey = String.format(RedisConstant.VIDEO_PLAY_ONLINE_COUNT_USER, fileId, deviceId);
+        String playOnlineKey = String.format(RedisConstant.VIDEO_PLAY_ONLINE_COUNT, fileId);
+        if (!redisUtils.keyExists(userPlayOnlineKey)) {
+            redisUtils.setEx(userPlayOnlineKey, fileId, RedisConstant.TIME_1SED * 8);
+            return redisUtils.incrementEx(playOnlineKey, RedisConstant.TIME_1SED * 10).intValue();
+        }
+        redisUtils.expire(playOnlineKey, RedisConstant.TIME_1SED * 10);
+        redisUtils.expire(userPlayOnlineKey, RedisConstant.TIME_1SED * 8);
+        Integer count = (Integer) redisUtils.get(playOnlineKey);
+        return count == null ? 1 : count;
+    }
+
+    public void decrementPlayOnlineCount(String key) {
+        redisUtils.decrement(key);
+    }
 }

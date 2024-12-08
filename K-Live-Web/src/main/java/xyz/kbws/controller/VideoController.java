@@ -122,8 +122,9 @@ public class VideoController {
     }
 
     @ApiOperation(value = "上报在线观看人数")
-    @PostMapping("/reportVideoPlyaOnline")
+    @PostMapping("/reportVideoPlayOnline")
     public BaseResponse<Integer> repostVideoPlayOnline(@RequestBody VideoReportRequest videoReportRequest) {
-        return ResultUtils.success(10);
+        Integer count = redisComponent.reportVideoPlayOnline(videoReportRequest.getFileId(), videoReportRequest.getDeviceId());
+        return ResultUtils.success(count);
     }
 }

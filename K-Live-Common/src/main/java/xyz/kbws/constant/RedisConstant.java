@@ -9,6 +9,8 @@ public interface RedisConstant {
 
     String CHECK_CODE = "klive:checkcode:";
 
+    Integer TIME_1SED = 1000;
+
     Integer TIME_1MIN = 60 * 1000;
 
     Integer TIME_1DAY = 24 * 60 * 60 * 1000;
@@ -20,5 +22,11 @@ public interface RedisConstant {
     String UPLOADING_FILE = "klive:uploading:";
 
     String SYSTEM_SETTING = "klive:systemSetting:";
+
+    // 视频在线
+    String VIDEO_PLAY_ONLINE_COUNT_SUFFIX = "klive:video:play:online:";
+    String VIDEO_PLAY_ONLINE_COUNT = VIDEO_PLAY_ONLINE_COUNT_SUFFIX + "count:%s";
+    String VIDEO_PLAY_ONLINE_COUNT_USER_SUFFIX = "user:";
+    String VIDEO_PLAY_ONLINE_COUNT_USER = VIDEO_PLAY_ONLINE_COUNT_SUFFIX + VIDEO_PLAY_ONLINE_COUNT_USER_SUFFIX + "%s:%s";
 
 }
