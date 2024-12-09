@@ -80,4 +80,24 @@ public class HomePageController {
         boolean res = userService.updateById(user);
         return ResultUtils.success(res);
     }
+
+    @ApiOperation(value = "关注")
+    @AuthCheck
+    @PostMapping("/focus")
+    public BaseResponse<Boolean> focusUser(@NotEmpty String focusUserId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        boolean res = focusService.focusUser(userVO.getId(), focusUserId);
+        return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "取消关注")
+    @AuthCheck
+    @PostMapping("/ cancelFocus")
+    public BaseResponse<Boolean> cancelFocusUser(@NotEmpty String focusUserId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        boolean res = focusService.cancelFocusUser(userVO.getId(), focusUserId);
+        return ResultUtils.success(res);
+    }
 }

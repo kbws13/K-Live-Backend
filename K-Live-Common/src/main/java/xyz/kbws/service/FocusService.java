@@ -10,4 +10,7 @@ import xyz.kbws.model.entity.Focus;
 */
 public interface FocusService extends IService<Focus> {
 
+    Boolean focusUser(String userId, String focusUserId);
+
+    Boolean cancelFocusUser(String userId, String focusUserId);
 }

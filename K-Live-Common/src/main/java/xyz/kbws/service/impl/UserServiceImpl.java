@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
+import xyz.kbws.mapper.FocusMapper;
 import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.model.dto.user.UserLoginRequest;
 import xyz.kbws.model.dto.user.UserRegisterRequest;
+import xyz.kbws.model.entity.Focus;
 import xyz.kbws.model.entity.User;
 import xyz.kbws.model.enums.UserRoleEnum;
 import xyz.kbws.model.enums.UserSexEnum;
@@ -34,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private FocusMapper focusMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -91,9 +96,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // TODO 粉丝相关
+        // TODO 获赞数、播放数
         UserVO userVO = new UserVO();
         BeanUtil.copyProperties(user, userVO);
+        Integer fansCount = focusMapper.selectFansCount(userId);
+        Integer focusCount = focusMapper.selectFocusCount(userId);
+        userVO.setFansCount(fansCount);
+        userVO.setFocusCount(focusCount);
+        if (currentUserId != null) {
+            QueryWrapper<Focus> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("userId", userId)
+                    .eq("focusUserId", currentUserId);
+            Focus focus = focusMapper.selectOne(queryWrapper);
+            userVO.setHaveFocus(focus != null);
+        }
         return userVO;
     }
 

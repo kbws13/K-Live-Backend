@@ -13,4 +13,12 @@
     <sql id="Base_Column_List">
         userId,focusUserId,focusTime
     </sql>
+
+    <select id="selectFansCount" resultType="java.lang.Integer">
+        select count(1) from focus where focusUserId = #{userId}
+    </select>
+
+    <select id="selectFocusCount" resultType="java.lang.Integer">
+        select count(1) from focus where userId = #{userId}
+    </select>
 </mapper>

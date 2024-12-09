@@ -17,13 +17,11 @@ public class Focus implements Serializable {
     /**
      * 用户 id
      */
-    @TableId
     private String userId;
 
     /**
      * 用户 id
      */
-    @TableId
     private String focusUserId;
 
     /**
