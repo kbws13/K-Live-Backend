@@ -17,4 +17,8 @@ public interface UserService extends IService<User> {
 
     UserVO login(UserLoginRequest userLoginRequest, String ip);
 
+    UserVO getUserDetailInfo(String currentUserId, String userId);
+
+    Boolean updateUserInfo(User user, UserVO tokenUserInfo);
+
 }

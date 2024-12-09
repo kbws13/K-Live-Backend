@@ -6,6 +6,7 @@ import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
@@ -30,6 +31,9 @@ import java.util.Date;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
+
+    @Resource
+    private UserMapper userMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -79,6 +83,48 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // TODO 设置粉丝数、关注数、硬币数
         redisComponent.saveUserVO(userVO);
         return userVO;
+    }
+
+    @Override
+    public UserVO getUserDetailInfo(String currentUserId, String userId) {
+        User user = this.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // TODO 粉丝相关
+        UserVO userVO = new UserVO();
+        BeanUtil.copyProperties(user, userVO);
+        return userVO;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateUserInfo(User user, UserVO tokenUserInfo) {
+        User dbUser = this.getById(user.getId());
+        if (!dbUser.getNickName().equals(user.getNickName()) && dbUser.getCurrentCoinCount() < UserConstant.UPDATE_NICK_NAME_COIN) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "硬币不足，无法修改昵称");
+        }
+        if (!dbUser.getNickName().equals(user.getNickName())) {
+            int count = userMapper.updateCoinCount(user.getId(), -UserConstant.UPDATE_NICK_NAME_COIN);
+            if (count == 0) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "硬币不足，无法修改昵称");
+            }
+        }
+        boolean res = this.updateById(user);
+
+        boolean update = false;
+        if (!user.getAvatar().equals(tokenUserInfo.getAvatar())) {
+            tokenUserInfo.setAvatar(user.getAvatar());
+            update = true;
+        }
+        if (!user.getNickName().equals(tokenUserInfo.getNickName())) {
+            tokenUserInfo.setNickName(user.getNickName());
+            update = true;
+        }
+        if (update) {
+            redisComponent.updateUserVO(tokenUserInfo);
+        }
+        return res;
     }
 }
 

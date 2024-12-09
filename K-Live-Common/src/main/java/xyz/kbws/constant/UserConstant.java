@@ -30,4 +30,6 @@ public interface UserConstant {
 
     Integer ZERO = 0;
 
+    Integer UPDATE_NICK_NAME_COIN = 5;
+
 }

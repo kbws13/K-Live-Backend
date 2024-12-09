@@ -54,6 +54,11 @@ public class RedisComponent {
         redisUtils.setEx(RedisConstant.TOKEN_WEB + userVO.getId(), userVO, expireTime);
     }
 
+    public void updateUserVO(UserVO userVO) {
+        long expireTime = System.currentTimeMillis() + RedisConstant.TIME_1DAY * 7L;
+        redisUtils.setEx(RedisConstant.TOKEN_WEB + userVO.getId(), userVO, expireTime);
+    }
+
     public UserVO getUserVO(String token) {
         if (StrUtil.isEmpty(token)) {
             return null;
