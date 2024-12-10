@@ -21,4 +21,15 @@
     <select id="selectFocusCount" resultType="java.lang.Integer">
         select count(1) from focus where userId = #{userId}
     </select>
+
+    <select id="selectList" resultType="xyz.kbws.model.vo.FocusVO">
+        select
+        u.*
+        <if test="query.queryType != null">
+            , i.nickName otherNickName, i.id otherUserId, i.personIntroduction otherPersonIntroduction, i.avatar otherAvatar
+             , (select count(1) from focus f where u.userId = f.focusUserId and focusUserId = f.userId) focusType
+        </if>
+        from focus u
+
+    </select>
 </mapper>

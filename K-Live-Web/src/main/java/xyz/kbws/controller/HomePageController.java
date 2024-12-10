@@ -1,14 +1,18 @@
 package xyz.kbws.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
+import xyz.kbws.constant.UserConstant;
 import xyz.kbws.model.dto.user.UserUpdateRequest;
+import xyz.kbws.model.entity.Focus;
 import xyz.kbws.model.entity.User;
+import xyz.kbws.model.query.FocusQuery;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.ActionService;
@@ -100,4 +104,19 @@ public class HomePageController {
         boolean res = focusService.cancelFocusUser(userVO.getId(), focusUserId);
         return ResultUtils.success(res);
     }
+
+    @ApiOperation(value = "加载关注列表")
+    @AuthCheck
+    @GetMapping("/loadFocusList")
+    public BaseResponse<Page<Focus>> loadFocusList(Integer pageNo, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        FocusQuery focusQuery = new FocusQuery();
+        focusQuery.setUserId(userVO.getId());
+        focusQuery.setPageNo(pageNo);
+        focusQuery.setQueryType(UserConstant.ZERO);
+        focusQuery.setOrderBy("focusTime desc");
+        return ResultUtils.success(null);
+    }
+
 }
