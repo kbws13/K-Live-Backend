@@ -14,5 +14,7 @@ public class FocusQuery extends Focus {
 
     private Integer pageNo;
 
+    private Integer pageSize;
+
     private String orderBy;
 }

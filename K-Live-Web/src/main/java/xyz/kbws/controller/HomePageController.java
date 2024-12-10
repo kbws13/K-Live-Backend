@@ -9,10 +9,12 @@ import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.UserConstant;
+import xyz.kbws.mapper.FocusMapper;
 import xyz.kbws.model.dto.user.UserUpdateRequest;
 import xyz.kbws.model.entity.Focus;
 import xyz.kbws.model.entity.User;
 import xyz.kbws.model.query.FocusQuery;
+import xyz.kbws.model.vo.FocusVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.ActionService;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @author kbws
@@ -47,6 +50,9 @@ public class HomePageController {
 
     @Resource
     private ActionService actionService;
+
+    @Resource
+    private FocusMapper focusMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -108,15 +114,43 @@ public class HomePageController {
     @ApiOperation(value = "加载关注列表")
     @AuthCheck
     @GetMapping("/loadFocusList")
-    public BaseResponse<Page<Focus>> loadFocusList(Integer pageNo, HttpServletRequest request) {
+    public BaseResponse<Page<FocusVO>> loadFocusList(Integer pageNo, HttpServletRequest request) {
         String token = request.getHeader("token");
         UserVO userVO = redisComponent.getUserVO(token);
         FocusQuery focusQuery = new FocusQuery();
         focusQuery.setUserId(userVO.getId());
         focusQuery.setPageNo(pageNo);
+        focusQuery.setPageSize(10);
         focusQuery.setQueryType(UserConstant.ZERO);
         focusQuery.setOrderBy("focusTime desc");
-        return ResultUtils.success(null);
+        List<FocusVO> list = focusMapper.selectList(focusQuery);
+        Page<FocusVO> page = new Page<>();
+        page.setRecords(list);
+        page.setTotal(list.size());
+        page.setCurrent(pageNo);
+        page.setSize(10);
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "加载粉丝列表")
+    @AuthCheck
+    @GetMapping("/loadFansList")
+    public BaseResponse<Page<FocusVO>> loadFansList(Integer pageNo, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        FocusQuery focusQuery = new FocusQuery();
+        focusQuery.setFocusUserId(userVO.getId());
+        focusQuery.setPageNo(pageNo);
+        focusQuery.setPageSize(10);
+        focusQuery.setQueryType(UserConstant.ONE);
+        focusQuery.setOrderBy("focusTime desc");
+        List<FocusVO> list = focusMapper.selectList(focusQuery);
+        Page<FocusVO> page = new Page<>();
+        page.setRecords(list);
+        page.setTotal(list.size());
+        page.setCurrent(pageNo);
+        page.setSize(10);
+        return ResultUtils.success(page);
     }
 
 }
