@@ -16,6 +16,8 @@ public interface SeriesMapper extends BaseMapper<Series> {
 
     List<Series> selectUserAllSeries(@Param("userId") String userId);
 
+    List<Series> selectListWithVideo(@Param("userId") String userId);
+
     Integer selectMaxSort(@Param("userId") String userId);
 
     void changeSort(@Param("seriesList") List<Series> seriesList);

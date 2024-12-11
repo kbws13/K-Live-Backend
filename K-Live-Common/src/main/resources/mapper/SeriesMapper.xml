@@ -12,6 +12,10 @@
             <result property="sort" column="sort" jdbcType="TINYINT"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+    
+    <resultMap id="BaseResultMapVide" type="xyz.kbws.model.entity.Series" extends="BaseResultMap">
+        <collection property="videoList" column="id" select="xyz.kbws.mapper.SeriesMapper.selectVideoList"></collection>
+    </resultMap>
 
     <sql id="Base_Column_List">
         id,`name`,`description`,
@@ -31,6 +35,26 @@
         ) t
         left join video v on v.id = t.videoId
         order by t.sort asc
+    </select>
+
+    <select id="selectVideoList" resultType="xyz.kbws.model.entity.Video">
+        select
+            v.id, v.name, v.cover, v.playCount, v.createTime
+        from
+            seriesContent sc
+        inner join video v on sc.videoId = v.id
+        where
+            sc.seriesId = #{id}
+        order by sc.sort asc
+        limit 5
+    </select>
+
+    <select id="selectListWithVideo" resultMap="BaseResultMapVide">
+        select
+        u.*
+        from series u
+        where userId = #{userId}
+        order by sort
     </select>
 
     <select id="selectMaxSort" resultType="java.lang.Integer">

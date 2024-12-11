@@ -54,10 +54,17 @@ public class SeriesController {
     private RedisComponent redisComponent;
 
     @ApiOperation(value = "获取用户所有视频合集")
-    @GetMapping("/loadVideoSeries")
-    public BaseResponse<List<Series>> loadVideoSeries(@NotEmpty String userId) {
+    @GetMapping("/loadSeries")
+    public BaseResponse<List<Series>> loadSeries(@NotEmpty String userId) {
         List<Series> userAllSeries = seriesService.getUserAllSeries(userId);
         return ResultUtils.success(userAllSeries);
+    }
+
+    @ApiOperation(value = "查询主页集合视频")
+    @GetMapping("/loadSeriesWithVideo")
+    public BaseResponse<List<Series>> loadSeriesWithVideo(@NotEmpty String userId) {
+        List<Series> seriesList = seriesService.selectListWithVideoList(userId);
+        return ResultUtils.success(seriesList);
     }
 
     @ApiOperation(value = "添加视频合集")

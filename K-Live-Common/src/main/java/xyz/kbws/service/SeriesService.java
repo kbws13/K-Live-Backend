@@ -14,6 +14,8 @@ public interface SeriesService extends IService<Series> {
 
     List<Series> getUserAllSeries(String userId);
 
+    List<Series> selectListWithVideoList(String userId);
+
     void addSeries(Series series, String videoIds);
 
     void changeSeriesSort(String userId, String seriesIds);

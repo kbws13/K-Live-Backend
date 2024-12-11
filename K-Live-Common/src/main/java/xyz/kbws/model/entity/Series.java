@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -51,6 +53,12 @@ public class Series implements Serializable {
      */
     @TableField(exist = false)
     private String cover;
+
+    /**
+     * 合集中的视频
+     */
+    @TableField(exist = false)
+    private List<Video> videoList;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

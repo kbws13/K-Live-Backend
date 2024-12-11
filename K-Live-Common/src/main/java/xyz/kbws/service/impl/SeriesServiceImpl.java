@@ -19,6 +19,7 @@ import xyz.kbws.service.VideoService;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,6 +47,11 @@ public class SeriesServiceImpl extends ServiceImpl<SeriesMapper, Series>
     @Override
     public List<Series> getUserAllSeries(String userId) {
         return seriesMapper.selectUserAllSeries(userId);
+    }
+
+    @Override
+    public List<Series> selectListWithVideoList(String userId) {
+        return seriesMapper.selectListWithVideo(userId);
     }
 
     @Override
