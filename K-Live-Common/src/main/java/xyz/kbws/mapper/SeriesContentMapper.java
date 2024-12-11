@@ -1,7 +1,11 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.SeriesContent;
+import xyz.kbws.model.query.SeriesContentQuery;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +15,9 @@ import xyz.kbws.model.entity.SeriesContent;
 */
 public interface SeriesContentMapper extends BaseMapper<SeriesContent> {
 
+    Integer selectMaxSort(@Param("seriesId") Integer seriesId);
+
+    List<SeriesContent> selectList(@Param("query") SeriesContentQuery query);
 }
 
 

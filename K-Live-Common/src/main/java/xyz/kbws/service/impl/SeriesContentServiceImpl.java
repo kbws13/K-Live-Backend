@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import xyz.kbws.mapper.SeriesContentMapper;
 import xyz.kbws.model.entity.SeriesContent;
+import xyz.kbws.model.query.SeriesContentQuery;
 import xyz.kbws.service.SeriesContentService;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -15,6 +19,13 @@ import xyz.kbws.service.SeriesContentService;
 public class SeriesContentServiceImpl extends ServiceImpl<SeriesContentMapper, SeriesContent>
     implements SeriesContentService {
 
+    @Resource
+    private SeriesContentMapper seriesContentMapper;
+
+    @Override
+    public List<SeriesContent> selectList(SeriesContentQuery seriesContentQuery) {
+        return seriesContentMapper.selectList(seriesContentQuery);
+    }
 }
 
 

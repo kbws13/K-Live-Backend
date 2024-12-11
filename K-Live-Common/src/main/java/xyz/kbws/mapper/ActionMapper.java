@@ -1,7 +1,11 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.Action;
+import xyz.kbws.model.query.ActionQuery;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +15,7 @@ import xyz.kbws.model.entity.Action;
 */
 public interface ActionMapper extends BaseMapper<Action> {
 
+    List<Action> selectList(@Param("query")ActionQuery query);
 }
 
 

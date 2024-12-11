@@ -1,6 +1,7 @@
 package xyz.kbws.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,11 +9,17 @@ import org.springframework.web.bind.annotation.*;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
+import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.UserConstant;
+import xyz.kbws.mapper.ActionMapper;
 import xyz.kbws.mapper.FocusMapper;
+import xyz.kbws.model.dto.home.HomeLoadVideoRequest;
 import xyz.kbws.model.dto.user.UserUpdateRequest;
-import xyz.kbws.model.entity.Focus;
+import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.User;
+import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.enums.VideoOrderTypeEnum;
+import xyz.kbws.model.query.ActionQuery;
 import xyz.kbws.model.query.FocusQuery;
 import xyz.kbws.model.vo.FocusVO;
 import xyz.kbws.model.vo.UserVO;
@@ -53,6 +60,9 @@ public class HomePageController {
 
     @Resource
     private FocusMapper focusMapper;
+
+    @Resource
+    private ActionMapper actionMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -150,6 +160,45 @@ public class HomePageController {
         page.setTotal(list.size());
         page.setCurrent(pageNo);
         page.setSize(10);
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "获取主页视频列表")
+    @PostMapping("/loadVideoList")
+    public BaseResponse<Page<Video>> loadVideoList(@RequestBody HomeLoadVideoRequest homeLoadVideoRequest, HttpServletRequest request) {
+        QueryWrapper<Video> queryWrapper = new QueryWrapper<>();
+        long current = homeLoadVideoRequest.getCurrent();
+        long pageSize = homeLoadVideoRequest.getPageSize();
+        Integer type = homeLoadVideoRequest.getType();
+        if (type != null) {
+            pageSize = 10;
+        }
+        VideoOrderTypeEnum orderTypeEnum = VideoOrderTypeEnum.getEnumByValue(homeLoadVideoRequest.getOrderType());
+        if (orderTypeEnum == null) {
+            orderTypeEnum = VideoOrderTypeEnum.CREATE_TIME;
+        }
+        queryWrapper.orderByDesc(orderTypeEnum.getField());
+        queryWrapper.like("name", homeLoadVideoRequest.getVideoName());
+        Page<Video> page = videoService.page(new Page<>(current, pageSize), queryWrapper);
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "获取收藏视频")
+    @GetMapping("/loadUserCollection")
+    public BaseResponse<Page<Action>> loadUserCollection(@NotEmpty String userId, Integer pageNo, Integer pageSize) {
+        ActionQuery actionQuery = new ActionQuery();
+        actionQuery.setUserId(userId);
+        actionQuery.setQueryVideo(true);
+        actionQuery.setCurrent(pageNo);
+        actionQuery.setPageSize(pageSize);
+        actionQuery.setSortField("actionTime");
+        actionQuery.setSortOrder(CommonConstant.SORT_ORDER_DESC);
+        List<Action> record = actionMapper.selectList(actionQuery);
+        Page<Action> page = new Page<>();
+        page.setSize(pageSize);
+        page.setTotal(record.size());
+        page.setCurrent(pageNo);
+        page.setRecords(record);
         return ResultUtils.success(page);
     }
 

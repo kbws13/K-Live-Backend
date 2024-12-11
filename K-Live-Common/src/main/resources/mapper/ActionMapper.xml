@@ -20,4 +20,30 @@
         commentId,actionType,count,
         userId,actionTime
     </sql>
+    
+    <sql id="queryCondition">
+        <if test="query.userId != null and query.userId != ''">
+            userId = #{query.userId}
+        </if>
+    </sql>
+
+    <select id="selectList" resultType="xyz.kbws.model.entity.Action">
+        select
+        u.*
+        <if test="query.queryVideo">
+            , v.cover videoCover, v.name videoName
+        </if>
+        from action u
+        <if test="query.queryVideo">
+            left join video v on v.id = u.videoId
+        </if>
+        where
+        <include refid="queryCondition" />
+        <if test="query.sortField != null">
+            order by ${query.sortField} ${query.sortOrder}
+        </if>
+        <if test="videoPostQueryRequest.pageSize != null">
+            LIMIT #{query.pageSize} OFFSET #{query.current}
+        </if>
+    </select>
 </mapper>

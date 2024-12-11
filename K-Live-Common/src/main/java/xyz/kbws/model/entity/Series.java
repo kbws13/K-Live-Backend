@@ -46,6 +46,12 @@ public class Series implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 视频封面
+     */
+    @TableField(exist = false)
+    private String cover;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

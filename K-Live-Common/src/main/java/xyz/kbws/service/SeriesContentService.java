@@ -2,6 +2,9 @@ package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.kbws.model.entity.SeriesContent;
+import xyz.kbws.model.query.SeriesContentQuery;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -10,4 +13,5 @@ import xyz.kbws.model.entity.SeriesContent;
 */
 public interface SeriesContentService extends IService<SeriesContent> {
 
+    List<SeriesContent> selectList(SeriesContentQuery seriesContentQuery);
 }

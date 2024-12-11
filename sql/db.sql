@@ -200,6 +200,7 @@ create table seriesContent
 (
     seriesId int         not null comment '合集 id',
     videoId  varchar(10) not null comment '视频 id',
+    userId   varchar(10) not null comment '用户 id',
     sort     tinyint(4)  not null comment '排序',
     primary key (seriesId, videoId) using BTREE
 ) comment '视频合集内容表';

@@ -17,4 +17,29 @@
         id,`name`,`description`,
         userId,sort,updateTime
     </sql>
+
+    <select id="selectUserAllSeries" resultType="xyz.kbws.model.entity.Series">
+        select
+            t.*, v.cover
+        from
+        (
+            select 
+                s.*, (
+                    select videoId from seriesContent v where v.seriesId = s.id order by s.sort asc limit 1
+                ) videoId
+            from series s where s.userId = #{userId}
+        ) t
+        left join video v on v.id = t.videoId
+        order by t.sort asc
+    </select>
+
+    <select id="selectMaxSort" resultType="java.lang.Integer">
+        select ifnull(max(sort), 0) from series u where u.userId = #{userId}
+    </select>
+
+    <update id="changeSort">
+        <foreach collection="seriesList" separator="," item="item">
+            update series set sort = #{item.sort} where userId = #{item.userId} and id = #{item.id}
+        </foreach>
+    </update>
 </mapper>
