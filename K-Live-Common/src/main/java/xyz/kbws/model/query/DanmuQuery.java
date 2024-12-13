@@ -3,23 +3,21 @@ package xyz.kbws.model.query;
 import lombok.Data;
 import xyz.kbws.common.PageRequest;
 
+import java.io.Serializable;
+
 /**
  * @author kbws
- * @date 2024/12/7
+ * @date 2024/12/13
  * @description:
  */
 @Data
-public class VideoCommentQuery extends PageRequest {
+public class DanmuQuery extends PageRequest implements Serializable {
 
     private String videoId;
 
     private String userId;
 
-    private Integer parentCommandId;
-
-    private Integer topType;
-
-    private Boolean loadChildren;
-
     private Boolean queryVideoInfo;
+
+    private static final long serialVersionUID = 7983922646304381738L;
 }

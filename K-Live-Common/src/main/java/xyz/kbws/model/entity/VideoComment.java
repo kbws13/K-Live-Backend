@@ -95,5 +95,11 @@ public class VideoComment implements Serializable {
     private List<VideoComment> children;
 
     @TableField(exist = false)
+    private String cover;
+
+    @TableField(exist = false)
+    private String videoName;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

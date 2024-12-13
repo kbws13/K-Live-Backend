@@ -1,10 +1,21 @@
 package xyz.kbws.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import xyz.kbws.common.ErrorCode;
+import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.entity.VideoFile;
+import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
+
+import javax.annotation.Resource;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author fangyuan
@@ -15,6 +26,47 @@ import xyz.kbws.service.VideoService;
 public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         implements VideoService {
 
+    @Resource
+    private VideoPostService videoPostService;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteVideo(String videoId, String userId) {
+        Video video = this.getById(videoId);
+        if (video == null || userId != null && !video.getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        this.removeById(videoId);
+        videoPostService.removeById(videoId);
+        // TODO 加硬币
+        // TODO 删除 ES 信息
+
+        executorService.execute(() -> {
+            // TODO 删除分 p
+            // TODO 删除弹幕
+            // TODO 删除评论
+        });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void changeInteraction(String videoId, String userId, String interaction) {
+        Video video = new Video();
+        video.setInteraction(interaction);
+        QueryWrapper<Video> videoQueryWrapper = new QueryWrapper<>();
+        videoQueryWrapper.eq("id", videoId)
+                .eq("userId", userId);
+        this.update(video, videoQueryWrapper);
+
+        VideoPost videoPost = new VideoPost();
+        videoPost.setInteraction(interaction);
+        QueryWrapper<VideoPost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", videoId)
+                .eq("userId", userId);
+        videoPostService.update(videoPost, queryWrapper);
+    }
 }
 
 

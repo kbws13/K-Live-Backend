@@ -32,6 +32,7 @@
     </sql>
     
     <sql id="query_condition">
+        where
         <if test="query.videoId != null and query.videoId != ''">
             videoId = #{query.videoId}
         </if>
@@ -41,12 +42,23 @@
         <if test="query.topType != null and query.topType != ''">
             and topType = #{query.topType}
         </if>
+        <if test="query.userId != null and query.userId != ''">
+            and userId = #{query.userId}
+        </if>
     </sql>
 
     <select id="selectList" resultType="xyz.kbws.model.entity.VideoComment">
         select
         <include refid="Base_Column_List" />
-        from videoComment
+        <if test="query.queryVideoInfo">
+            , vd.name videoName, vd.cover, u.nickName, u.avatar, u2.nickName replyNickName
+        </if>
+        from videoComment v
+        <if test="query.queryVideoInfo">
+            inner join video vd on vd.id = v.videoId
+            left join user u on u.id = v.userId
+            left join user u2 on u2.id = v.replyUserId
+        </if>
         <include refid="query_condition" />
         <if test="query.sortField != null">
             order by ${query.sortField}
@@ -54,6 +66,14 @@
         <if test="query.pageSize !=- null">
             LIMIT #{query.pageSize} OFFSET #{query.current}
         </if>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from videoComment v
+        <if test="query.queryVideoInfo">
+            inner join video vd on vd.id = v.videoId
+        </if>
+        <include refid="query_condition" />
     </select>
 
     <select id="selectChildrenComment" resultMap="BaseResultMap">

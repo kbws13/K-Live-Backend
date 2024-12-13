@@ -21,4 +21,42 @@
         userId,postTime,text,
         mode,color,time
     </sql>
+
+    <sql id="queryCondition">
+        where
+        <if test="query.videoId != null and query.videoId != ''">
+            videoId = #{query.videoId}
+        </if>
+        <if test="query.userId != null and query.userId != ''">
+            and vd.userId = #{query.userId}
+        </if>
+    </sql>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        <if test="query.queryVideoInfo">
+            , vd.name videoName, vd.cover videoCover, u.nickName
+        </if>
+        from danmu v
+        <if test="query.queryVideoInfo">
+            inner join video vd on vd.id = v.videoId
+            left join `user` u on u.id = v.userId
+        </if>
+        <include refid="queryCondition" />
+        <if test="query.sortField != null">
+            order by ${query.sortField} ${query.sortOrder}
+        </if>
+        <if test="query.pageSize !=- null">
+            LIMIT #{query.pageSize} OFFSET #{query.current}
+        </if>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from danmu v
+        <if test="query.queryVideoInfo">
+            inner join video vd on vd.id = v.videoId
+        </if>
+        <include refid="queryCondition" />
+    </select>
 </mapper>

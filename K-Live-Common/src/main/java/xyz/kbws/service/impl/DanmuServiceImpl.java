@@ -11,9 +11,12 @@ import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Danmu;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.enums.UserActionTypeEnum;
+import xyz.kbws.model.query.DanmuQuery;
 import xyz.kbws.service.DanmuService;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author fangyuan
@@ -23,6 +26,9 @@ import javax.annotation.Resource;
 @Service
 public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu>
         implements DanmuService {
+
+    @Resource
+    private DanmuMapper danmuMapper;
 
     @Resource
     private VideoMapper videoMapper;
@@ -40,6 +46,27 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu>
         this.save(danmu);
         videoMapper.updateCountInfo(danmu.getVideoId(), UserActionTypeEnum.VIDEO_DANMU.getField(), 1);
         // TODO 更新 ES 弹幕数量
+    }
+
+    @Override
+    public void deleteDanmu(String userId, Integer danmuId) {
+        Danmu danmu = this.getById(danmuId);
+        if (danmu == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        Video video = videoMapper.selectById(danmu.getVideoId());
+        if (video == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (userId != null && !video.getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        this.removeById(danmuId);
+    }
+
+    @Override
+    public List<Danmu> selectListByParam(DanmuQuery danmuQuery) {
+        return danmuMapper.selectList(danmuQuery);
     }
 }
 

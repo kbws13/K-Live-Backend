@@ -2,6 +2,9 @@ package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.kbws.model.entity.Danmu;
+import xyz.kbws.model.query.DanmuQuery;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,4 +14,8 @@ import xyz.kbws.model.entity.Danmu;
 public interface DanmuService extends IService<Danmu> {
 
     void saveDanmu(Danmu danmu);
+
+    void deleteDanmu(String userId, Integer danmuId);
+
+    List<Danmu> selectListByParam(DanmuQuery danmuQuery);
 }

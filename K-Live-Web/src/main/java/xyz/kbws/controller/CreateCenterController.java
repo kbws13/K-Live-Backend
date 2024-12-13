@@ -8,24 +8,29 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.common.BaseResponse;
+import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
+import xyz.kbws.constant.CommonConstant;
+import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAddRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostUpdateRequest;
-import xyz.kbws.model.entity.VideoFilePost;
-import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.entity.*;
 import xyz.kbws.model.enums.VideoStatusEnum;
+import xyz.kbws.model.query.DanmuQuery;
+import xyz.kbws.model.query.VideoCommentQuery;
 import xyz.kbws.model.vo.UserVO;
+import xyz.kbws.model.vo.VideoPostEditVO;
 import xyz.kbws.model.vo.VideoPostVO;
 import xyz.kbws.model.vo.VideoStatusCountVO;
 import xyz.kbws.redis.RedisComponent;
-import xyz.kbws.service.VideoFilePostService;
-import xyz.kbws.service.VideoPostService;
-import xyz.kbws.service.VideoService;
+import xyz.kbws.service.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,10 +55,54 @@ public class CreateCenterController {
     private VideoService videoService;
 
     @Resource
+    private VideoCommentService videoCommentService;
+
+    @Resource
+    private DanmuService danmuService;
+
+    @Resource
     private VideoPostMapper videoPostMapper;
 
     @Resource
     private RedisComponent redisComponent;
+
+    @ApiOperation(value = "加载所有视频")
+    @AuthCheck
+    @GetMapping("/loadAllVideo")
+    public BaseResponse<List<Video>> loadAllVideo(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        QueryWrapper<Video> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userId", userVO.getId())
+                .orderByDesc("createTime");
+        List<Video> list = videoService.list(queryWrapper);
+        return ResultUtils.success(list);
+    }
+
+    @ApiOperation(value = "加载所有评论")
+    @AuthCheck
+    @PostMapping("/loadComment")
+    public BaseResponse<Page<VideoComment>> loadComment(@RequestBody VideoCommentQuery videoCommentQuery, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        videoCommentQuery.setSortField("id");
+        videoCommentQuery.setSortOrder(CommonConstant.SORT_ORDER_DESC);
+        videoCommentQuery.setUserId(userVO.getId());
+        Page<VideoComment> page = new Page<>();
+        List<VideoComment> videoComments = videoCommentService.listByParams(videoCommentQuery);
+        page.setRecords(videoComments);
+        page.setTotal(videoComments.size());
+        page.setCurrent(videoCommentQuery.getCurrent());
+        page.setSize(videoCommentQuery.getPageSize());
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "删除评论")
+    @AuthCheck
+    @PostMapping("/deleteComment")
+    public void deleteComment(@NotNull Integer commentId) {
+        videoCommentService.removeById(commentId);
+    }
 
     @ApiOperation(value = "发布视频")
     @AuthCheck
@@ -131,6 +180,70 @@ public class CreateCenterController {
         videoStatusCountVO.setAuditFailCount(auditFailCount);
         videoStatusCountVO.setInProcessCount(inProcessCount);
         return ResultUtils.success(videoStatusCountVO);
+    }
+
+    @ApiOperation(value = "获取视频信息")
+    @AuthCheck
+    @GetMapping("/getVideoInfoById")
+    public BaseResponse<VideoPostEditVO> getVideoInfoById(@NotEmpty String videoId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        VideoPost videoPost = videoPostService.getById(videoId);
+        if (videoPost == null || !videoPost.getUserId().equals(userVO.getId())) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        QueryWrapper<VideoFilePost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("videoId", videoId)
+                .orderByAsc("fileIndex");
+        List<VideoFilePost> videoFilePostList = videoFilePostService.list(queryWrapper);
+        VideoPostEditVO videoPostEditVO = new VideoPostEditVO();
+        videoPostEditVO.setVideoPost(videoPost);
+        videoPostEditVO.setVideoFilePostList(videoFilePostList);
+        return ResultUtils.success(videoPostEditVO);
+    }
+
+    @ApiOperation(value = "修改视频互动设置")
+    @AuthCheck
+    @PostMapping("/changeVideoInteraction")
+    public void changeVideoInteraction(@NotEmpty String videoId, String interaction, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        videoService.changeInteraction(videoId, interaction, userVO.getId());
+    }
+
+    @ApiOperation(value = "删除视频")
+    @AuthCheck
+    @PostMapping("/deleteVideo")
+    public void deleteVideo(@NotEmpty String videoId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        videoService.deleteVideo(videoId, userVO.getId());
+    }
+
+    @ApiOperation(value = "加载所有弹幕")
+    @AuthCheck
+    @PostMapping("/loadDanmu")
+    public BaseResponse<Page<Danmu>> loadDanmu(@RequestBody DanmuQuery danmuQuery, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        danmuQuery.setUserId(userVO.getId());
+        danmuQuery.setQueryVideoInfo(true);
+        Page<Danmu> page = new Page<>();
+        List<Danmu> danmuList = danmuService.selectListByParam(danmuQuery);
+        page.setRecords(danmuList);
+        page.setTotal(danmuList.size());
+        page.setCurrent(danmuQuery.getCurrent());
+        page.setSize(danmuQuery.getPageSize());
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "删除弹幕")
+    @AuthCheck
+    @PostMapping("/deleteDanmu")
+    public void deleteDanmu(@NotNull Integer danmuId, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        danmuService.deleteDanmu(userVO.getId(), danmuId);
     }
 
 }

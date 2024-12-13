@@ -44,6 +44,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -336,11 +337,12 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
     private Boolean changeVideo(VideoPost videoPost) {
         VideoPost dbPost = this.getById(videoPost.getId());
+        String introduction = Optional.ofNullable(dbPost.getIntroduction()).orElse("");
         // 标题、封面、标签、简介
         return !videoPost.getName().equals(dbPost.getName())
                 || !videoPost.getCover().equals(dbPost.getCover())
                 || !videoPost.getTags().equals(dbPost.getTags())
-                || !videoPost.getIntroduction().equals(dbPost.getIntroduction());
+                || !videoPost.getIntroduction().equals(introduction);
     }
 }
 

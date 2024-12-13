@@ -10,4 +10,7 @@ import xyz.kbws.model.entity.Video;
  */
 public interface VideoService extends IService<Video> {
 
+    void deleteVideo(String videoId, String userId);
+
+    void changeInteraction(String videoId, String userId, String interaction);
 }

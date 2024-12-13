@@ -19,7 +19,5 @@ public class ActionQuery extends PageRequest {
     @NotEmpty
     private String userId;
 
-    private Integer current;
-
     private Boolean queryVideo;
 }

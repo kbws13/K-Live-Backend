@@ -62,5 +62,14 @@ public class Danmu implements Serializable {
     private Integer time;
 
     @TableField(exist = false)
+    private String videoName;
+
+    @TableField(exist = false)
+    private String videoCover;
+
+    @TableField(exist = false)
+    private String nickName;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
