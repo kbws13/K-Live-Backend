@@ -111,4 +111,10 @@ public class Video implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    @TableField(exist = false)
+    private String nickName;
+
+    @TableField(exist = false)
+    private String avatar;
 }

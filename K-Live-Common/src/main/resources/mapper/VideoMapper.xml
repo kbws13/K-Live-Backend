@@ -41,7 +41,7 @@
         createTime,updateTime
     </sql>
 
-    <select id="queryList" resultType="xyz.kbws.model.vo.VideoVO">
+    <select id="queryList" resultType="xyz.kbws.model.entity.Video">
         select v.*
         <if test="videoQueryRequest.queryUserInfo == true">
             ,

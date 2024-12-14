@@ -9,6 +9,7 @@ import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.CommonConstant;
+import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
@@ -16,11 +17,11 @@ import xyz.kbws.model.dto.video.VideoReportRequest;
 import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
+import xyz.kbws.model.enums.SearchOrderTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.enums.VideoRecommendTypeEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoInfoResultVO;
-import xyz.kbws.model.vo.VideoVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.ActionService;
 import xyz.kbws.service.VideoFileService;
@@ -29,9 +30,11 @@ import xyz.kbws.service.VideoService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author kbws
@@ -58,27 +61,30 @@ public class VideoController {
     @Resource
     private RedisComponent redisComponent;
 
+    @Resource
+    private EsComponent esComponent;
+
     @ApiOperation(value = "获取推荐视频列表")
     @GetMapping("/loadRecommendVideo")
-    public BaseResponse<List<VideoVO>> loadRecommendVideo() {
+    public BaseResponse<List<Video>> loadRecommendVideo() {
         VideoQueryRequest videoQueryRequest = new VideoQueryRequest();
         videoQueryRequest.setQueryUserInfo(true);
         videoQueryRequest.setSortField("createTime");
         videoQueryRequest.setSortOrder(CommonConstant.SORT_ORDER_DESC);
         videoQueryRequest.setRecommendType(VideoRecommendTypeEnum.RECOMMEND.getValue());
-        List<VideoVO> list = videoMapper.queryList(videoQueryRequest);
+        List<Video> list = videoMapper.queryList(videoQueryRequest);
         return ResultUtils.success(list);
     }
 
     @ApiOperation(value = "获取非推荐视频列表")
     @PostMapping("/loadVideoList")
-    public BaseResponse<Page<VideoVO>> loadVideoList(@RequestBody VideoQueryRequest videoQueryRequest) {
+    public BaseResponse<Page<Video>> loadVideoList(@RequestBody VideoQueryRequest videoQueryRequest) {
         long current = videoQueryRequest.getCurrent();
         long pageSize = videoQueryRequest.getPageSize();
         videoQueryRequest.setRecommendType(VideoRecommendTypeEnum.NO_RECOMMEND.getValue());
         videoQueryRequest.setQueryUserInfo(true);
-        List<VideoVO> record = videoMapper.queryList(videoQueryRequest);
-        Page<VideoVO> page = new Page<>();
+        List<Video> record = videoMapper.queryList(videoQueryRequest);
+        Page<Video> page = new Page<>();
         page.setRecords(record);
         page.setSize(record.size());
         page.setCurrent(current);
@@ -126,5 +132,21 @@ public class VideoController {
     public BaseResponse<Integer> repostVideoPlayOnline(@RequestBody VideoReportRequest videoReportRequest) {
         Integer count = redisComponent.reportVideoPlayOnline(videoReportRequest.getFileId(), videoReportRequest.getDeviceId());
         return ResultUtils.success(count);
+    }
+
+    @ApiOperation(value = "搜索视频")
+    @GetMapping("/search")
+    public BaseResponse<Page<Video>> search(@NotEmpty String keyword, Integer orderType, Integer current) {
+        //  TODO 记录搜索热词
+        Page<Video> page = esComponent.search(true, keyword, orderType, current, 30);
+        return ResultUtils.success(page);
+    }
+
+    @ApiOperation(value = "获取推荐视频")
+    @GetMapping("/getRecommendVideo")
+    public BaseResponse<List<Video>> getRecommendVideo(@NotEmpty String keyword, @NotEmpty String videoId) {
+        List<Video> records = esComponent.search(true, keyword, SearchOrderTypeEnum.VIDEO_PLAY.getValue(), 1, 10).getRecords();
+        records = records.stream().filter(item -> item.getId().equals(videoId)).collect(Collectors.toList());
+        return ResultUtils.success(records);
     }
 }
