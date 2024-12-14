@@ -146,7 +146,11 @@ public class RedisComponent {
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
-
         return list;
+    }
+
+    public void recordVideoPlayCount(String videoId) {
+        String date = DateUtil.format(DateUtil.date(), "yyyyMMdd");
+        redisUtils.incrementEx(RedisConstant.VIDEO_PLAY_COUNT + date + ":" + videoId, RedisConstant.TIME_1DAY * 2L);
     }
 }

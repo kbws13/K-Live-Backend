@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +18,14 @@ import xyz.kbws.config.AppConfig;
 import xyz.kbws.config.SystemSetting;
 import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.FileConstant;
+import xyz.kbws.constant.MqConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.model.dto.file.PreUploadVideoRequest;
+import xyz.kbws.model.dto.video.VideoPlayRequest;
 import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.vo.UploadingFileVO;
 import xyz.kbws.model.vo.UserVO;
+import xyz.kbws.rabbitmq.MessageProducer;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoFileService;
 import xyz.kbws.utils.FFmpegUtil;
@@ -58,6 +62,9 @@ public class FileController {
 
     @Resource
     private AppConfig appConfig;
+
+    @Resource
+    private MessageProducer messageProducer;
 
     @ApiOperation(value = "获取资源接口")
     @GetMapping("/getResource")
@@ -149,11 +156,20 @@ public class FileController {
 
     @ApiOperation(value = "获取视频 m3u8 文件")
     @GetMapping("/videoResource/{fileId}")
-    public void videoResource(@PathVariable("fileId") @NotEmpty(message = "文件 id 不能为空") String fileId, HttpServletResponse response) {
+    public void videoResource(@PathVariable("fileId") @NotEmpty(message = "文件 id 不能为空") String fileId, HttpServletRequest request, HttpServletResponse response) {
         VideoFile videoFile = videoFileService.getById(fileId);
         String filePath = videoFile.getFilePath();
         readFile(response, filePath + File.separator + FileConstant.M3U8_NAME);
-        // TODO 更新视频的观看信息
+        // 更新视频的观看信息
+        String token = request.getHeader("token");
+        UserVO userVO = redisComponent.getUserVO(token);
+        VideoPlayRequest videoPlayRequest = new VideoPlayRequest();
+        videoPlayRequest.setVideoId(videoFile.getVideoId());
+        videoPlayRequest.setFileIndex(videoFile.getFileIndex());
+        if (userVO != null) {
+            videoPlayRequest.setUserId(userVO.getId());
+        }
+        messageProducer.sendMessage(MqConstant.NEWS_EXCHANGE_NAME, MqConstant.NEWS_QUEUE, JSONUtil.toJsonStr(videoPlayRequest));
     }
 
     @ApiOperation(value = "获取视频 TS 文件")

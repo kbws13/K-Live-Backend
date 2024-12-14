@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.common.PageRequest;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.es.EsComponent;
@@ -156,5 +157,19 @@ public class VideoController {
     public BaseResponse<List<String>> getSearchKeywordTop() {
         List<String> keywordTop = redisComponent.getKeywordTop(10);
         return ResultUtils.success(keywordTop);
+    }
+
+    @ApiOperation(value = "获取热门播放视频")
+    @GetMapping("/loadHotVideoList")
+    public BaseResponse<Page<Video>> loadHotVideoList(@RequestBody VideoQueryRequest videoQueryRequest) {
+        videoQueryRequest.setQueryUserInfo(true);
+        videoQueryRequest.setLastPlayHour(CommonConstant.HOUR_24);
+        List<Video> videoList = videoService.selectList(videoQueryRequest);
+        Page<Video> page = new Page<>();
+        page.setRecords(videoList);
+        page.setCurrent(videoQueryRequest.getCurrent());
+        page.setSize(videoQueryRequest.getPageSize());
+        page.setTotal(videoList.size());
+        return ResultUtils.success(page);
     }
 }

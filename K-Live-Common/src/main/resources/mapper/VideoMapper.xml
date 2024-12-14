@@ -59,6 +59,9 @@
         <if test="videoQueryRequest.categoryId != null">
             and categoryId = #{videoQueryRequest.categoryId}
         </if>
+        <if test="videoQueryRequest.lastPlayHour != null">
+            <![CDATA[ and v.lastPlayTime > date_sub(now(), interval #{videoQueryRequest.lastPlayHour} hour) ]]>
+        </if>
         <if test="videoQueryRequest.sortField != null">
             order by #{videoQueryRequest.sortField} #{videoQueryRequest.sortOrder}
         </if>

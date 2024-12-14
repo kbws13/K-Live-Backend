@@ -20,4 +20,5 @@ public class VideoQueryRequest extends PageRequest implements Serializable {
     private Integer categoryId;
     private Boolean queryUserInfo;
     private Integer recommendType;
+    private Integer lastPlayHour;
 }

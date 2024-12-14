@@ -21,4 +21,6 @@ public interface CommonConstant {
     Integer LENGTH_20 = 20;
 
     Integer LENGTH_30 = 30;
+
+    Integer HOUR_24 = 24;
 }

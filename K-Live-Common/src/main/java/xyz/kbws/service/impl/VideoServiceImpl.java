@@ -8,13 +8,17 @@ import xyz.kbws.common.ErrorCode;
 import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
+import xyz.kbws.model.dto.video.VideoQueryRequest;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,6 +33,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
 
     @Resource
     private VideoPostService videoPostService;
+
+    @Resource
+    private VideoMapper videoMapper;
 
     @Resource
     private EsComponent esComponent;
@@ -70,6 +77,16 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         queryWrapper.eq("id", videoId)
                 .eq("userId", userId);
         videoPostService.update(videoPost, queryWrapper);
+    }
+
+    @Override
+    public List<Video> selectList(VideoQueryRequest videoQueryRequest) {
+        return videoMapper.queryList(videoQueryRequest);
+    }
+
+    @Override
+    public void addPlayCount(String videoId) {
+        videoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), 1);
     }
 }
 

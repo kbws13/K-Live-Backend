@@ -29,6 +29,8 @@ public interface RedisConstant {
     String VIDEO_PLAY_ONLINE_COUNT_USER_SUFFIX = "user:";
     String VIDEO_PLAY_ONLINE_COUNT_USER = VIDEO_PLAY_ONLINE_COUNT_SUFFIX + VIDEO_PLAY_ONLINE_COUNT_USER_SUFFIX + "%s:%s";
 
+    String VIDEO_PLAY_COUNT = "klive:video:playCount:";
+
     // 热词
     String VIDEO_SEARCH_COUNT = "klive:search:";
 }
