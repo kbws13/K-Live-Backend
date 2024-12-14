@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
+import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.DanmuMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Danmu;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.enums.SearchOrderTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.query.DanmuQuery;
 import xyz.kbws.service.DanmuService;
@@ -33,6 +35,9 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu>
     @Resource
     private VideoMapper videoMapper;
 
+    @Resource
+    private EsComponent esComponent;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveDanmu(Danmu danmu) {
@@ -45,7 +50,8 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu>
         }
         this.save(danmu);
         videoMapper.updateCountInfo(danmu.getVideoId(), UserActionTypeEnum.VIDEO_DANMU.getField(), 1);
-        // TODO 更新 ES 弹幕数量
+        // 更新 ES 弹幕数量
+        esComponent.updateDocCount(danmu.getVideoId(), SearchOrderTypeEnum.VIDEO_DANMU.getField(), 1);
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.constant.UserConstant;
+import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.ActionMapper;
 import xyz.kbws.mapper.UserMapper;
@@ -14,6 +15,7 @@ import xyz.kbws.mapper.VideoCommentMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.enums.SearchOrderTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.service.ActionService;
 
@@ -37,6 +39,9 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     @Resource
     private VideoCommentMapper videoCommentMapper;
 
+    @Resource
+    private EsComponent esComponent;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveAction(Action action) {
@@ -56,6 +61,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
                 .eq("userId", action.getUserId());
         Action dbAction = this.getOne(queryWrapper);
         action.setActionTime(DateUtil.date());
+        int changeCount;
         switch (actionTypeEnum) {
             case VIDEO_LIKE:
             case VIDEO_COLLECT:
@@ -64,10 +70,11 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
                 } else {
                     this.save(action);
                 }
-                int changeCount = dbAction == null ? UserConstant.ONE : -UserConstant.ONE;
+                changeCount = dbAction == null ? UserConstant.ONE : -UserConstant.ONE;
                 videoMapper.updateCountInfo(action.getVideoId(), actionTypeEnum.getField(), changeCount);
                 if (actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT) {
-                    // TODO 更新 ES 的收藏数量
+                    // 更新 ES 的收藏数量
+                    esComponent.updateDocCount(video.getId(), SearchOrderTypeEnum.VIDEO_COLLECT.getField(), changeCount);
                 }
                 break;
             case VIDEO_COIN:

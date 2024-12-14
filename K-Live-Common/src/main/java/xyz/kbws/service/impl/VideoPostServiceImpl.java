@@ -20,6 +20,7 @@ import xyz.kbws.constant.CommonConstant;
 import xyz.kbws.constant.FileConstant;
 import xyz.kbws.constant.MqConstant;
 import xyz.kbws.constant.UserConstant;
+import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoFilePostMapper;
 import xyz.kbws.mapper.VideoPostMapper;
@@ -74,6 +75,9 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
     @Resource
     private RedisComponent redisComponent;
+
+    @Resource
+    private EsComponent esComponent;
 
     @Resource
     private MessageProducer messageProducer;
@@ -284,10 +288,13 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
         // 删除文件
         List<String> delFilePathList = deleteFileList.stream().map(VideoFile::getFilePath).collect(Collectors.toList());
-        // 发送删除文件消息到消息队列
-        JSONArray jsonArray = JSONUtil.parseArray(delFilePathList);
-        messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.DEL_FILE_ROUTING_KEY, jsonArray.toString());
-        // TODO 保存信息到 ES
+        if (!delFilePathList.isEmpty()) {
+            // 发送删除文件消息到消息队列
+            JSONArray jsonArray = JSONUtil.parseArray(delFilePathList);
+            messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.DEL_FILE_ROUTING_KEY, jsonArray.toString());
+        }
+        // 保存信息到 ES
+        esComponent.saveDoc(dbVideo);
     }
 
     private void coverVideo2TS(String completeVideo) {
