@@ -137,7 +137,8 @@ public class VideoController {
     @ApiOperation(value = "搜索视频")
     @GetMapping("/search")
     public BaseResponse<Page<Video>> search(@NotEmpty String keyword, Integer orderType, Integer current) {
-        //  TODO 记录搜索热词
+        //  记录搜索热词
+        redisComponent.addKeywordCount(keyword);
         Page<Video> page = esComponent.search(true, keyword, orderType, current, 30);
         return ResultUtils.success(page);
     }
@@ -148,5 +149,12 @@ public class VideoController {
         List<Video> records = esComponent.search(true, keyword, SearchOrderTypeEnum.VIDEO_PLAY.getValue(), 1, 10).getRecords();
         records = records.stream().filter(item -> item.getId().equals(videoId)).collect(Collectors.toList());
         return ResultUtils.success(records);
+    }
+
+    @ApiOperation(value = "获取搜索热词")
+    @GetMapping("/getSearchKeywordTop")
+    public BaseResponse<List<String>> getSearchKeywordTop() {
+        List<String> keywordTop = redisComponent.getKeywordTop(10);
+        return ResultUtils.success(keywordTop);
     }
 }

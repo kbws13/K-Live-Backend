@@ -17,6 +17,7 @@ import xyz.kbws.utils.JwtUtil;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author kbws
@@ -134,5 +135,18 @@ public class RedisComponent {
 
     public void decrementPlayOnlineCount(String key) {
         redisUtils.decrement(key);
+    }
+
+    public void addKeywordCount(String keyword) {
+        redisUtils.zAddCount(RedisConstant.VIDEO_SEARCH_COUNT, keyword);
+    }
+
+    public List<String> getKeywordTop(Integer top) {
+        List<String> list = redisUtils.getZSetList(RedisConstant.VIDEO_SEARCH_COUNT, top - 1)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+        return list;
     }
 }

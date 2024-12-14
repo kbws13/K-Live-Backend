@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.Video;
@@ -29,6 +30,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     @Resource
     private VideoPostService videoPostService;
 
+    @Resource
+    private EsComponent esComponent;
+
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Transactional(rollbackFor = Exception.class)
@@ -41,8 +45,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         this.removeById(videoId);
         videoPostService.removeById(videoId);
         // TODO 加硬币
-        // TODO 删除 ES 信息
-
+        // 删除 ES 信息
+        esComponent.deleteDoc(videoId);
         executorService.execute(() -> {
             // TODO 删除分 p
             // TODO 删除弹幕
