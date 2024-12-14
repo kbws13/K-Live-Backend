@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
@@ -58,6 +59,7 @@ import java.util.stream.Collectors;
 public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost>
         implements VideoPostService {
 
+    @Lazy
     @Resource
     private VideoService videoService;
 

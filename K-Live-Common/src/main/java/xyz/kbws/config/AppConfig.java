@@ -18,4 +18,10 @@ public class AppConfig {
 
     @Value("${ffmpeg.showLog:}")
     private Boolean showFFmpegLog;
+
+    @Value("${es.host:127.0.0.1:9200}")
+    private String esHost;
+
+    @Value("${es.indexName:klive_video}")
+    private String esIndexName;
 }

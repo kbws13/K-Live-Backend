@@ -5,3 +5,7 @@ spring:
     virtual-host: /
     username: guest
     password: guest
+
+es:
+  host: 127.0.0.9200
+  indexName: klive_video
