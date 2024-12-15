@@ -20,4 +20,8 @@
         type,sendUserId,readType,
         createTime,extendJson
     </sql>
+
+    <select id="getMessageTypeNoReadCount" resultType="xyz.kbws.model.vo.MessageCountVO">
+        select type messageType, count(1) messageCount from message where userId = #{userId} and readType = 0 group by type
+    </select>
 </mapper>

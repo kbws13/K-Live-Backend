@@ -18,9 +18,12 @@ import xyz.kbws.model.entity.VideoComment;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.MessageReadTypeEnum;
 import xyz.kbws.model.enums.MessageTypeEnum;
+import xyz.kbws.model.vo.MessageCountVO;
 import xyz.kbws.service.MessageService;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -30,6 +33,9 @@ import javax.annotation.Resource;
 @Service
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     implements MessageService {
+
+    @Resource
+    private MessageMapper messageMapper;
 
     @Resource
     private VideoMapper videoMapper;
@@ -86,6 +92,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
         message.setUserId(receiveUserId);
         message.setExtendJson(JSONUtil.toJsonStr(messageExtendDTO));
         this.save(message);
+    }
+
+    @Override
+    public List<MessageCountVO> getMessageTypeNoReadCount(String userId) {
+        return messageMapper.getMessageTypeNoReadCount(userId);
     }
 }
 
