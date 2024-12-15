@@ -56,7 +56,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
         }
         QueryWrapper<Action> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("videoId", action.getVideoId())
-                .eq("commendId", action.getCommentId())
+                .eq(action.getCommentId() != null, "commentId", action.getCommentId())
                 .eq("actionType", action.getActionType())
                 .eq("userId", action.getUserId());
         Action dbAction = this.getOne(queryWrapper);
@@ -102,7 +102,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
                 UserActionTypeEnum opposeTypeEnum = actionTypeEnum == UserActionTypeEnum.COMMENT_LIKE ? UserActionTypeEnum.COMMENT_HATE : UserActionTypeEnum.COMMENT_LIKE;
                 queryWrapper.clear();
                 queryWrapper.eq("videoId", action.getVideoId())
-                        .eq("commendId", action.getCommentId())
+                        .eq(action.getCommentId() != null, "commentId", action.getCommentId())
                         .eq("actionType", opposeTypeEnum.getValue())
                         .eq("userId", action.getUserId());
                 Action opposeAction = this.getOne(queryWrapper);

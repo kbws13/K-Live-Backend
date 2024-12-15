@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
+import xyz.kbws.annotation.RecordMessage;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.model.dto.action.ActionDoRequest;
 import xyz.kbws.model.entity.Action;
+import xyz.kbws.model.enums.MessageTypeEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.ActionService;
@@ -36,6 +38,7 @@ public class ActionController {
 
     @ApiOperation(value = "执行行为")
     @AuthCheck
+    @RecordMessage(messageType = MessageTypeEnum.LIKE)
     @PostMapping("/doAction")
     public void doAction(@RequestBody ActionDoRequest actionDoRequest, HttpServletRequest request) {
         String token = request.getHeader("token");

@@ -17,13 +17,11 @@ public class VideoPlayHistory implements Serializable {
     /**
      * 用户 id
      */
-    @TableId
     private String userId;
 
     /**
      * 视频 id
      */
-    @TableId
     private String videoId;
 
     /**

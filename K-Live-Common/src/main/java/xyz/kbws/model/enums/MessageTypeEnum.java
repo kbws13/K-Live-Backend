@@ -10,13 +10,14 @@ import java.util.stream.Collectors;
 /**
  * @author kbws
  * @date 2024/11/25
- * @description:
+ * @description: 站内消息类型枚举
  */
 @Getter
-public enum UserSexEnum {
-    MAN("男", 1),
-    WOMAN("女", 0),
-    SECRECY("未知", -1),
+public enum MessageTypeEnum {
+    SYSTEM("系统消息", 1),
+    LIKE("点赞消息", 2),
+    COLLECTION("收藏消息", 3),
+    COMMENT("评论消息", 4),
     ;
 
 
@@ -24,7 +25,7 @@ public enum UserSexEnum {
 
     private final Integer value;
 
-    UserSexEnum(String text, Integer value) {
+    MessageTypeEnum(String text, Integer value) {
         this.text = text;
         this.value = value;
     }
@@ -44,11 +45,11 @@ public enum UserSexEnum {
      * @param value
      * @return
      */
-    public static UserSexEnum getEnumByValue(Integer value) {
+    public static MessageTypeEnum getEnumByValue(Integer value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (UserSexEnum anEnum : UserSexEnum.values()) {
+        for (MessageTypeEnum anEnum : MessageTypeEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }

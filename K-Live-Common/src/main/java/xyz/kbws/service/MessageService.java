@@ -2,6 +2,7 @@ package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.kbws.model.entity.Message;
+import xyz.kbws.model.enums.MessageTypeEnum;
 
 /**
 * @author fangyuan
@@ -10,4 +11,5 @@ import xyz.kbws.model.entity.Message;
 */
 public interface MessageService extends IService<Message> {
 
+    void saveMessage(String videoId, String sendUserId, MessageTypeEnum messageTypeEnum, String content, Integer replyCommentId);
 }

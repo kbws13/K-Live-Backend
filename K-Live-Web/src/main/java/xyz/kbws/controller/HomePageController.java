@@ -193,7 +193,7 @@ public class HomePageController {
         actionQuery.setPageSize(pageSize);
         actionQuery.setSortField("actionTime");
         actionQuery.setSortOrder(CommonConstant.SORT_ORDER_DESC);
-        List<Action> record = actionMapper.selectList(actionQuery);
+        List<Action> record = actionMapper.findList(actionQuery);
         Page<Action> page = new Page<>();
         page.setSize(pageSize);
         page.setTotal(record.size());

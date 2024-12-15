@@ -27,7 +27,7 @@
         </if>
     </sql>
 
-    <select id="selectList" resultType="xyz.kbws.model.entity.Action">
+    <select id="findList" resultType="xyz.kbws.model.entity.Action">
         select
         u.*
         <if test="query.queryVideo">

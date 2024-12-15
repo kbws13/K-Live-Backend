@@ -15,7 +15,7 @@ import java.util.List;
 */
 public interface ActionMapper extends BaseMapper<Action> {
 
-    List<Action> selectList(@Param("query")ActionQuery query);
+    List<Action> findList(@Param("query")ActionQuery query);
 }
 
 

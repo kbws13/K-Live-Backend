@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
+import xyz.kbws.annotation.RecordMessage;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
@@ -23,6 +24,7 @@ import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoComment;
 import xyz.kbws.model.enums.CommentTopTypeEnum;
+import xyz.kbws.model.enums.MessageTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.query.VideoCommentQuery;
 import xyz.kbws.model.vo.UserVO;
@@ -68,6 +70,7 @@ public class VideoCommentController {
 
     @ApiOperation(value = "发布评论")
     @AuthCheck
+    @RecordMessage(messageType = MessageTypeEnum.COMMENT)
     @PostMapping("/addComment")
     public BaseResponse<VideoComment> addComment(@RequestBody CommentAddRequest commentAddRequest, HttpServletRequest request) {
         String token = request.getHeader("token");

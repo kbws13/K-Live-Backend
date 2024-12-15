@@ -10,13 +10,12 @@ import java.util.stream.Collectors;
 /**
  * @author kbws
  * @date 2024/11/25
- * @description:
+ * @description: 站内消息类型枚举
  */
 @Getter
-public enum UserSexEnum {
-    MAN("男", 1),
-    WOMAN("女", 0),
-    SECRECY("未知", -1),
+public enum MessageReadTypeEnum {
+    NO_READ("未读", 0),
+    READ("已读", 1),
     ;
 
 
@@ -24,7 +23,7 @@ public enum UserSexEnum {
 
     private final Integer value;
 
-    UserSexEnum(String text, Integer value) {
+    MessageReadTypeEnum(String text, Integer value) {
         this.text = text;
         this.value = value;
     }
@@ -44,11 +43,11 @@ public enum UserSexEnum {
      * @param value
      * @return
      */
-    public static UserSexEnum getEnumByValue(Integer value) {
+    public static MessageReadTypeEnum getEnumByValue(Integer value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (UserSexEnum anEnum : UserSexEnum.values()) {
+        for (MessageReadTypeEnum anEnum : MessageReadTypeEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }

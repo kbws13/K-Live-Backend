@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
+import xyz.kbws.annotation.RecordMessage;
 import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAuditRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
+import xyz.kbws.model.enums.MessageTypeEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoPostVO;
 import xyz.kbws.redis.RedisComponent;
@@ -68,8 +70,12 @@ public class VideoController {
 
     @ApiOperation(value = "视频审核接口")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @RecordMessage(messageType = MessageTypeEnum.SYSTEM)
     @PostMapping("/auditVideoPost")
     public void auditVideoPost(@RequestBody VideoPostAuditRequest videoPostAuditRequest) {
-
+        String videoId = videoPostAuditRequest.getVideoId();
+        Integer status = videoPostAuditRequest.getStatus();
+        String reason = videoPostAuditRequest.getReason();
+        videoPostService.auditVideo(videoId, status, reason);
     }
 }

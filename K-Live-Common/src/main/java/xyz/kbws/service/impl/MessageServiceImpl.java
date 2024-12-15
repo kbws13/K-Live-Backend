@@ -1,10 +1,26 @@
 package xyz.kbws.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import xyz.kbws.mapper.MessageMapper;
+import xyz.kbws.mapper.VideoCommentMapper;
+import xyz.kbws.mapper.VideoMapper;
+import xyz.kbws.mapper.VideoPostMapper;
+import xyz.kbws.model.dto.message.MessageExtendDTO;
 import xyz.kbws.model.entity.Message;
+import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.entity.VideoComment;
+import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.enums.MessageReadTypeEnum;
+import xyz.kbws.model.enums.MessageTypeEnum;
 import xyz.kbws.service.MessageService;
+
+import javax.annotation.Resource;
 
 /**
 * @author fangyuan
@@ -15,6 +31,62 @@ import xyz.kbws.service.MessageService;
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     implements MessageService {
 
+    @Resource
+    private VideoMapper videoMapper;
+
+    @Resource
+    private VideoCommentMapper videoCommentMapper;
+
+    @Resource
+    private VideoPostMapper videoPostMapper;
+
+    @Async
+    @Override
+    public void saveMessage(String videoId, String sendUserId, MessageTypeEnum messageTypeEnum, String content, Integer replyCommentId) {
+        Video video = videoMapper.selectById(videoId);
+        if (video == null) {
+            return;
+        }
+        MessageExtendDTO messageExtendDTO = new MessageExtendDTO();
+        messageExtendDTO.setMessageContent(content);
+        String receiveUserId = video.getUserId();
+        // 点赞、收藏，已经记录过就不再记录
+        if (ArrayUtil.contains(new Integer[]{MessageTypeEnum.LIKE.getValue(), MessageTypeEnum.COLLECTION.getValue()}, messageTypeEnum.getValue())) {
+            QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("userId", receiveUserId)
+                    .eq("videoId", videoId)
+                    .eq("type", messageTypeEnum.getValue());
+            long count = this.count(queryWrapper);
+            if (count > 0) {
+                return;
+            }
+        }
+        Message message = new Message();
+        message.setVideoId(videoId);
+        message.setSendUserId(sendUserId);
+        message.setReadType(MessageReadTypeEnum.NO_READ.getValue());
+        message.setCreateTime(DateUtil.date());
+        message.setType(messageTypeEnum.getValue());
+        // 评论特殊处理
+        if (replyCommentId != null) {
+            VideoComment videoComment = videoCommentMapper.selectById(replyCommentId);
+            if (videoComment != null) {
+                receiveUserId = videoComment.getUserId();
+                messageExtendDTO.setMessageContentReply(videoComment.getContent());
+            }
+        }
+        if (receiveUserId.equals(sendUserId)) {
+            return;
+        }
+        // 系统消息特殊处理
+        if (messageTypeEnum == MessageTypeEnum.SYSTEM) {
+            VideoPost videoPost = videoPostMapper.selectById(videoId);
+            messageExtendDTO.setAuditStatus(videoPost.getStatus());
+        }
+        message.setUserId(receiveUserId);
+        message.setExtendJson(JSONUtil.toJsonStr(messageExtendDTO));
+        this.save(message);
+    }
 }
 
 
