@@ -204,3 +204,37 @@ create table seriesContent
     sort     tinyint(4)  not null comment '排序',
     primary key (seriesId, videoId) using BTREE
 ) comment '视频合集内容表';
+
+create table message
+(
+    id         int auto_increment primary key comment '消息 id',
+    userId     varchar(10) not null comment '用户 id',
+    videoId    varchar(10) not null comment '视频 id',
+    type       tinyint(1)           default null comment '消息类型',
+    sendUserId varchar(10) not null comment '发生人 id',
+    readType   tinyint(1)           default null comment '0:未读 1:已读',
+    createTime datetime    not null default CURRENT_TIMESTAMP comment '创建时间',
+    extendJson text comment '扩展消息',
+    key idx_user_id (userId) using BTREE,
+    key idx_read_type (readType) using BTREE,
+    key idx_message_type (type) using BTREE
+) comment '用户消息表';
+
+create table videoPlayHistory
+(
+    userId         varchar(10) not null comment '用户 id',
+    videoId        varchar(10) not null comment '视频 id',
+    fileIndex      int         not null comment '视频文件索引',
+    lastUpdateTime datetime    not null comment '最后更新时间',
+    primary key (userId(4), videoId) using BTREE,
+    key idx_video_id (videoId) using BTREE,
+    key idx_user_id (userId) using BTREE
+) comment '视频播放历史表';
+
+create table statisticInfo
+(
+    statisticDate varchar(10) not null comment '统计日期',
+    userId        varchar(10) not null comment '用户 id',
+    dataType      tinyint(1)  not null comment '数据统计类型',
+    count         int default null comment '统计数量'
+) comment '数据统计表';
