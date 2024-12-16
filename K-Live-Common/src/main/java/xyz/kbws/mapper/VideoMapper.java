@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.vo.CountInfoVO;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public interface VideoMapper extends BaseMapper<Video> {
 
     void updateCountInfo(@Param("videoId") String videoId, @Param("field") String field, @Param("changeCount") Integer changeCount);
 
+    CountInfoVO selectSumCountInfoVO(@Param("userId") String userId);
 }
 
 

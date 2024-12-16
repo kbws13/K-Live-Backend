@@ -8,16 +8,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.config.SystemSetting;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.FocusMapper;
 import xyz.kbws.mapper.UserMapper;
+import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.user.UserLoginRequest;
 import xyz.kbws.model.dto.user.UserRegisterRequest;
 import xyz.kbws.model.entity.Focus;
 import xyz.kbws.model.entity.User;
 import xyz.kbws.model.enums.UserRoleEnum;
 import xyz.kbws.model.enums.UserSexEnum;
+import xyz.kbws.model.vo.CountInfoVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.UserService;
@@ -39,6 +42,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     private FocusMapper focusMapper;
+
+    @Resource
+    private VideoMapper videoMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -63,9 +69,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setUserRole(UserRoleEnum.USER.getValue());
         user.setSex(UserSexEnum.SECRECY.getValue());
         user.setTheme(UserConstant.ONE);
-        // TODO 初始化用户的硬币
-        user.setCurrentCoinCount(10);
-        user.setTotalCoinCount(10);
+        // 初始化用户的硬币
+        SystemSetting systemSetting = redisComponent.getSystemSetting();
+        user.setCurrentCoinCount(systemSetting.getRegisterCoinCount());
+        user.setTotalCoinCount(systemSetting.getRegisterCoinCount());
         return this.save(user);
     }
 
@@ -85,7 +92,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         this.updateById(user);
         UserVO userVO = new UserVO();
         BeanUtil.copyProperties(user, userVO);
-        // TODO 设置粉丝数、关注数、硬币数
+        // 设置粉丝数、关注数、硬币数
+        Integer fansCount = focusMapper.selectFansCount(user.getId());
+        Integer focusCount = focusMapper.selectFocusCount(user.getId());
+        userVO.setFansCount(fansCount);
+        userVO.setFocusCount(focusCount);
         redisComponent.saveUserVO(userVO);
         return userVO;
     }
@@ -96,13 +107,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // TODO 获赞数、播放数
         UserVO userVO = new UserVO();
         BeanUtil.copyProperties(user, userVO);
         Integer fansCount = focusMapper.selectFansCount(userId);
         Integer focusCount = focusMapper.selectFocusCount(userId);
         userVO.setFansCount(fansCount);
         userVO.setFocusCount(focusCount);
+        // 获赞数、播放数
+        CountInfoVO countInfoVO = videoMapper.selectSumCountInfoVO(userId);
+        BeanUtil.copyProperties(countInfoVO, userVO);
         if (currentUserId != null) {
             QueryWrapper<Focus> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("userId", userId)

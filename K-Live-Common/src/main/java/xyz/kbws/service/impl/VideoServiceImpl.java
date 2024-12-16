@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.config.SystemSetting;
 import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
+import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.UserActionTypeEnum;
+import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
 
@@ -38,6 +41,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     private VideoMapper videoMapper;
 
     @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private RedisComponent redisComponent;
+
+    @Resource
     private EsComponent esComponent;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -51,7 +60,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         }
         this.removeById(videoId);
         videoPostService.removeById(videoId);
-        // TODO 加硬币
+        // 减硬币
+        SystemSetting systemSetting = redisComponent.getSystemSetting();
+        userMapper.updateCoinCount(video.getUserId(), -systemSetting.getPostVideoCoinCount());
         // 删除 ES 信息
         esComponent.deleteDoc(videoId);
         executorService.execute(() -> {

@@ -22,6 +22,7 @@ import xyz.kbws.constant.MqConstant;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
+import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoFilePostMapper;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.entity.Video;
@@ -72,6 +73,9 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
 
     @Resource
     private VideoFilePostMapper videoFilePostMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -269,7 +273,8 @@ public class VideoPostServiceImpl extends ServiceImpl<VideoPostMapper, VideoPost
         if (dbVideo == null) {
             // 第一次过审
             SystemSetting systemSetting = redisComponent.getSystemSetting();
-            // TODO 给用户加硬币
+            // 给用户加硬币
+            userMapper.updateCoinCount(videoPost.getUserId(), systemSetting.getPostVideoCoinCount());
         }
         // 更新发布信息到正式表
         BeanUtil.copyProperties(videoPost, dbVideo);

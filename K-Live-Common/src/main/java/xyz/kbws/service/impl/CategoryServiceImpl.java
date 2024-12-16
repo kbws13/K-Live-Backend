@@ -15,8 +15,10 @@ import xyz.kbws.model.dto.category.CategoryChangeSortRequest;
 import xyz.kbws.model.dto.category.CategoryQueryRequest;
 import xyz.kbws.model.dto.category.CategoryUpdateRequest;
 import xyz.kbws.model.entity.Category;
+import xyz.kbws.model.entity.Video;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.CategoryService;
+import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -33,6 +35,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private VideoService videoService;
 
     @Resource
     private RedisComponent redisComponent;
@@ -99,11 +104,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Override
     public Boolean deleteCategory(DeleteRequest deleteRequest) {
-        // TODO 查询分类下是否有视频
-
+        Integer categoryId = deleteRequest.getId();
+        // 查询分类下是否有视频
+        QueryWrapper<Video> videoQueryWrapper = new QueryWrapper<>();
+        videoQueryWrapper
+                .eq("categoryId", categoryId)
+                .or()
+                .eq("parentCategoryId", categoryId);
+        long count = videoService.count(videoQueryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "分类下有视频，无法删除");
+        }
         QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", deleteRequest.getId());
-        queryWrapper.or().eq("parentCategoryId", deleteRequest.getId());
+        queryWrapper
+                .eq("id", categoryId)
+                .or()
+                .eq("parentCategoryId", categoryId);
         boolean remove = this.remove(queryWrapper);
 
         //  刷新缓存
