@@ -3,6 +3,7 @@ package xyz.kbws.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.Message;
+import xyz.kbws.model.query.MessageQuery;
 import xyz.kbws.model.vo.MessageCountVO;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.List;
 public interface MessageMapper extends BaseMapper<Message> {
 
     List<MessageCountVO> getMessageTypeNoReadCount(@Param("userId") String userId);
+
+    List<Message> selectList(@Param("query") MessageQuery query);
 }
 
 

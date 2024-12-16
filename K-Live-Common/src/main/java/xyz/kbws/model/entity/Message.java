@@ -1,5 +1,7 @@
 package xyz.kbws.model.entity;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import xyz.kbws.model.dto.message.MessageExtendDTO;
 
 /**
  * 用户消息表
@@ -57,5 +60,24 @@ public class Message implements Serializable {
     private String extendJson;
 
     @TableField(exist = false)
+    private String sendUserAvatar;
+
+    @TableField(exist = false)
+    private String sendUserName;
+
+    @TableField(exist = false)
+    private String videoName;
+
+    @TableField(exist = false)
+    private String videoCover;
+
+    @TableField(exist = false)
+    private MessageExtendDTO messageExtendDTO;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public MessageExtendDTO getMessageExtendDTO() {
+        return StrUtil.isEmpty(extendJson) ? new MessageExtendDTO() : JSONUtil.toBean(extendJson, MessageExtendDTO.class);
+    }
 }

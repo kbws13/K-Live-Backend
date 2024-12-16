@@ -18,11 +18,11 @@ import xyz.kbws.model.entity.VideoComment;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.MessageReadTypeEnum;
 import xyz.kbws.model.enums.MessageTypeEnum;
+import xyz.kbws.model.query.MessageQuery;
 import xyz.kbws.model.vo.MessageCountVO;
 import xyz.kbws.service.MessageService;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,6 +97,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     @Override
     public List<MessageCountVO> getMessageTypeNoReadCount(String userId) {
         return messageMapper.getMessageTypeNoReadCount(userId);
+    }
+
+    @Override
+    public List<Message> selectList(MessageQuery messageQuery) {
+        return messageMapper.selectList(messageQuery);
     }
 }
 
