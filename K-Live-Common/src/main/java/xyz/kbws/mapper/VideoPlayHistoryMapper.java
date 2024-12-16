@@ -1,7 +1,11 @@
 package xyz.kbws.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import xyz.kbws.model.dto.videoPlayHistory.VideoHistoryQueryRequest;
 import xyz.kbws.model.entity.VideoPlayHistory;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -11,6 +15,7 @@ import xyz.kbws.model.entity.VideoPlayHistory;
 */
 public interface VideoPlayHistoryMapper extends BaseMapper<VideoPlayHistory> {
 
+    List<VideoPlayHistory> selectList(@Param("query") VideoHistoryQueryRequest query);
 }
 
 

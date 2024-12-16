@@ -35,5 +35,11 @@ public class VideoPlayHistory implements Serializable {
     private Date lastUpdateTime;
 
     @TableField(exist = false)
+    private String videoCover;
+
+    @TableField(exist = false)
+    private String videoName;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

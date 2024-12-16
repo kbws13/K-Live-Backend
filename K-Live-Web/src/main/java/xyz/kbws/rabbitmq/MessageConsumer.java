@@ -20,6 +20,7 @@ import xyz.kbws.model.dto.video.VideoPlayRequest;
 import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.enums.SearchOrderTypeEnum;
 import xyz.kbws.redis.RedisComponent;
+import xyz.kbws.service.VideoPlayHistoryService;
 import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
 
@@ -41,6 +42,9 @@ public class MessageConsumer {
 
     @Resource
     private VideoPostService videoPostService;
+
+    @Resource
+    private VideoPlayHistoryService videoPlayHistoryService;
 
     @Resource
     private RedisComponent redisComponent;
@@ -114,7 +118,11 @@ public class MessageConsumer {
                 VideoPlayRequest videoPlayRequest = JSONUtil.toBean(message, VideoPlayRequest.class);
                 videoService.addPlayCount(videoPlayRequest.getVideoId());
                 if (!StrUtil.isEmpty(videoPlayRequest.getUserId())) {
-                    // TODO 记录播放历史
+                    // 记录播放历史
+                    String videoId = videoPlayRequest.getVideoId();
+                    String userId = videoPlayRequest.getUserId();
+                    Integer fileIndex = videoPlayRequest.getFileIndex();
+                    videoPlayHistoryService.saveHistory(userId, videoId, fileIndex);
                 }
                 // 按天记录播放数量
                 redisComponent.recordVideoPlayCount(videoPlayRequest.getVideoId());

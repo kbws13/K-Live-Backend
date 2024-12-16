@@ -15,4 +15,30 @@
         userId,videoId,fileIndex,
         lastUpdateTime
     </sql>
+
+    <sql id="queryCondition">
+        <if test="query.userId != null">
+            and v.userId = #{query.userId}
+        </if>
+    </sql>
+
+    <select id="selectList" resultType="xyz.kbws.model.entity.VideoPlayHistory">
+        select
+        <include refid="Base_Column_List" />
+        <if test="query.queryVideoInfo">
+            , d.cover videoCover, d.name videoName
+        </if>
+        from videoPlayHistory v
+        <if test="query.queryVideoInfo">
+            left join video d on d.id = v.videoId
+        </if>
+        where
+        <include refid="queryCondition" />
+        <if test="query.sortField != null">
+            order by #{query.sortField} #{videoQueryRequest.sortOrder}
+        </if>
+        <if test="query.pageSize != null">
+            limit #{query.pageSize} offset #{query.current}
+        </if>
+    </select>
 </mapper>

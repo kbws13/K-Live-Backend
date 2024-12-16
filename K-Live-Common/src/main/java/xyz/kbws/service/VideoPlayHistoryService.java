@@ -1,7 +1,10 @@
 package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import xyz.kbws.model.dto.videoPlayHistory.VideoHistoryQueryRequest;
 import xyz.kbws.model.entity.VideoPlayHistory;
+
+import java.util.List;
 
 /**
 * @author fangyuan
@@ -10,4 +13,7 @@ import xyz.kbws.model.entity.VideoPlayHistory;
 */
 public interface VideoPlayHistoryService extends IService<VideoPlayHistory> {
 
+    void saveHistory(String userId, String videoId, Integer fileIndex);
+
+    List<VideoPlayHistory> selectList(VideoHistoryQueryRequest videoHistoryQueryRequest);
 }
