@@ -24,7 +24,6 @@ import xyz.kbws.model.query.FocusQuery;
 import xyz.kbws.model.vo.FocusVO;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
-import xyz.kbws.service.ActionService;
 import xyz.kbws.service.FocusService;
 import xyz.kbws.service.UserService;
 import xyz.kbws.service.VideoService;
@@ -54,9 +53,6 @@ public class HomePageController {
 
     @Resource
     private FocusService focusService;
-
-    @Resource
-    private ActionService actionService;
 
     @Resource
     private FocusMapper focusMapper;

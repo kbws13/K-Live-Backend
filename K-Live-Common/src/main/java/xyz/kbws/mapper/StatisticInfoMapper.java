@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.StatisticInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author fangyuan
@@ -20,6 +21,8 @@ public interface StatisticInfoMapper extends BaseMapper<StatisticInfo> {
 
     List<StatisticInfo> selectAction(@Param("statisticDate") String statisticDate
             , @Param("actionTypeArray") Integer[] actionTypeArray);
+
+    Map<String, Integer> selectTotalCount(@Param("userId") String userId);
 }
 
 

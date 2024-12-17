@@ -43,4 +43,20 @@
             actionType in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach>)
         group by videoUserId, actionType
     </select>
+
+    <select id="selectTotalCount" resultType="java.util.Map">
+        select
+            ifnull(sum(playCount, 0)),
+            ifnull(sum(likeCount, 0)),
+            ifnull(sum(danmuCount, 0)),
+            ifnull(sum(commentCount, 0)),
+            ifnull(sum(coinCount, 0)),
+            ifnull(sum(collectCount, 0))
+        from video
+        <where>
+            <if test="userId != null">
+                userId = #{userId}
+            </if>
+        </where>
+    </select>
 </mapper>

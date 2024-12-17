@@ -3,6 +3,8 @@ package xyz.kbws.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.kbws.model.entity.StatisticInfo;
 
+import java.util.Map;
+
 /**
 * @author fangyuan
 * @description 针对表【statisticInfo(数据统计表)】的数据库操作Service
@@ -11,4 +13,6 @@ import xyz.kbws.model.entity.StatisticInfo;
 public interface StatisticInfoService extends IService<StatisticInfo> {
 
     void syncStatisticInfoData();
+
+    Map<String, Integer> getTotalStatistic(String userId);
 }

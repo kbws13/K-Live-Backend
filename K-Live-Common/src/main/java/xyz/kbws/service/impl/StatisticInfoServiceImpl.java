@@ -1,12 +1,15 @@
 package xyz.kbws.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.constant.RedisConstant;
+import xyz.kbws.mapper.FocusMapper;
 import xyz.kbws.mapper.StatisticInfoMapper;
+import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.entity.StatisticInfo;
 import xyz.kbws.model.entity.Video;
@@ -35,6 +38,12 @@ public class StatisticInfoServiceImpl extends ServiceImpl<StatisticInfoMapper, S
 
     @Resource
     private VideoMapper videoMapper;
+
+    @Resource
+    private FocusMapper focusMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Resource
     private RedisComponent redisComponent;
@@ -102,6 +111,17 @@ public class StatisticInfoServiceImpl extends ServiceImpl<StatisticInfoMapper, S
         statisticInfoList.addAll(actionDataList);
 
         this.saveOrUpdateBatch(statisticInfoList);
+    }
+
+    @Override
+    public Map<String, Integer> getTotalStatistic(String userId) {
+        Map<String, Integer> res = statisticInfoMapper.selectTotalCount(userId);
+        if (!StrUtil.isEmpty(userId)) {
+            res.put("fansCount", focusMapper.selectFansCount(userId));
+        } else {
+            res.put("userCount", Math.toIntExact(userMapper.selectCount(new QueryWrapper<>())));
+        }
+        return res;
     }
 }
 
