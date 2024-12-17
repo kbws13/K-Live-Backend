@@ -15,4 +15,32 @@
         statisticDate,userId,dataType,
         count
     </sql>
+
+    <select id="selectFans" resultType="xyz.kbws.model.entity.StatisticInfo">
+        select
+            focusUserId, count(1) statisticCount
+        from focus
+        where
+            <![CDATA[ DATE_FORMAT(focusTime, '%Y-%m-%d')=#{statisticDate} ]]>
+        group by focusUserId
+    </select>
+
+    <select id="selectComment" resultType="xyz.kbws.model.entity.StatisticInfo">
+        select
+            videoUserId as userId, count(1) statisticCount
+        from videoComment
+        where
+            <![CDATA[ DATE_FORMAT(postTime, '%Y-%m-%d')=#{statisticDate} ]]>
+        group by videoUserId
+    </select>
+
+    <select id="selectAction" resultType="xyz.kbws.model.entity.StatisticInfo">
+        select videoUserId as userId, actionType as dataType, sum(count) as statisticCount
+        from action
+        where
+            <![CDATA[ DATE_FORMAT(actionTime, '%Y-%m-%d')=#{statisticDate} ]]>
+        and
+            actionType in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach>)
+        group by videoUserId, actionType
+    </select>
 </mapper>

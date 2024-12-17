@@ -17,6 +17,7 @@ import xyz.kbws.utils.JwtUtil;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -153,4 +154,15 @@ public class RedisComponent {
         String date = DateUtil.format(DateUtil.date(), "yyyyMMdd");
         redisUtils.incrementEx(RedisConstant.VIDEO_PLAY_COUNT + date + ":" + videoId, RedisConstant.TIME_1DAY * 2L);
     }
+
+    public Map<String, Integer> getVideoPlayCount(String date) {
+        Map<String, Object> videoPlayMap = redisUtils.getBatch(RedisConstant.VIDEO_PLAY_COUNT + date);
+        // 使用 stream 进行类型转换
+        return videoPlayMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, // 保留 Key
+                        entry -> ((Number) entry.getValue()).intValue() // 将 Object 转成 Integer
+                ));
+    }
+
 }

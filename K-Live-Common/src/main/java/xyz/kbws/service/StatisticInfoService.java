@@ -10,4 +10,5 @@ import xyz.kbws.model.entity.StatisticInfo;
 */
 public interface StatisticInfoService extends IService<StatisticInfo> {
 
+    void syncStatisticInfoData();
 }
