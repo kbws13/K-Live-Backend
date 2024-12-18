@@ -59,4 +59,19 @@
             </if>
         </where>
     </select>
+
+    <select id="selectListTotalInfo" resultType="xyz.kbws.model.entity.StatisticInfo">
+        select
+            ifnull(sum(count), 0) as count, dataType
+        from statisticInfo
+        where statisticDate = #{query.statisticDate}
+        group by dataType
+    </select>
+
+    <select id="selectUserCountTotalInfo" resultType="xyz.kbws.model.entity.StatisticInfo">
+        select count(1) as count, DATE_FORMAT(createTime, '%Y-%m-%d') as statisticDate
+        from user
+        group by statisticDate
+        order by statisticDate desc
+    </select>
 </mapper>

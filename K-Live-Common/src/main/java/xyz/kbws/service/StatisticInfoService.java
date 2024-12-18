@@ -2,7 +2,9 @@ package xyz.kbws.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.kbws.model.entity.StatisticInfo;
+import xyz.kbws.model.query.StatisticInfoQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,4 +17,8 @@ public interface StatisticInfoService extends IService<StatisticInfo> {
     void syncStatisticInfoData();
 
     Map<String, Integer> getTotalStatistic(String userId);
+
+    List<StatisticInfo> findListTotalInfo(StatisticInfoQuery query);
+
+    List<StatisticInfo> findUserCountTotalInfo(StatisticInfoQuery query);
 }

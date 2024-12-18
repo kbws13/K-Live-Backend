@@ -3,6 +3,7 @@ package xyz.kbws.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import xyz.kbws.model.entity.StatisticInfo;
+import xyz.kbws.model.query.StatisticInfoQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,10 @@ public interface StatisticInfoMapper extends BaseMapper<StatisticInfo> {
             , @Param("actionTypeArray") Integer[] actionTypeArray);
 
     Map<String, Integer> selectTotalCount(@Param("userId") String userId);
+
+    List<StatisticInfo> selectListTotalInfo(@Param("query") StatisticInfoQuery query);
+
+    List<StatisticInfo> selectUserCountTotalInfo(@Param("query") StatisticInfoQuery query);
 }
 
 

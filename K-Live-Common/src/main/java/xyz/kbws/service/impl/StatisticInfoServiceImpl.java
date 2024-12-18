@@ -15,11 +15,13 @@ import xyz.kbws.model.entity.StatisticInfo;
 import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.enums.StatisticTypeEnum;
 import xyz.kbws.model.enums.UserActionTypeEnum;
+import xyz.kbws.model.query.StatisticInfoQuery;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.StatisticInfoService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -122,6 +124,16 @@ public class StatisticInfoServiceImpl extends ServiceImpl<StatisticInfoMapper, S
             res.put("userCount", Math.toIntExact(userMapper.selectCount(new QueryWrapper<>())));
         }
         return res;
+    }
+
+    @Override
+    public List<StatisticInfo> findListTotalInfo(StatisticInfoQuery query) {
+        return statisticInfoMapper.selectListTotalInfo(query);
+    }
+
+    @Override
+    public List<StatisticInfo> findUserCountTotalInfo(StatisticInfoQuery query) {
+        return statisticInfoMapper.selectUserCountTotalInfo(query);
     }
 }
 
