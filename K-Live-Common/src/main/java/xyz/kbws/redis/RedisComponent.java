@@ -121,6 +121,10 @@ public class RedisComponent {
         return systemSetting;
     }
 
+    public void saveSystemSetting(SystemSetting systemSetting) {
+        redisUtils.set(RedisConstant.SYSTEM_SETTING, systemSetting);
+    }
+
     public Integer reportVideoPlayOnline(String fileId, String deviceId) {
         String userPlayOnlineKey = String.format(RedisConstant.VIDEO_PLAY_ONLINE_COUNT_USER, fileId, deviceId);
         String playOnlineKey = String.format(RedisConstant.VIDEO_PLAY_ONLINE_COUNT, fileId);
