@@ -2,8 +2,10 @@ package xyz.kbws.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.FocusMapper;
 import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoMapper;
+import xyz.kbws.model.dto.user.UserChangeStatusRequest;
+import xyz.kbws.model.dto.user.UserLoadRequest;
 import xyz.kbws.model.dto.user.UserLoginRequest;
 import xyz.kbws.model.dto.user.UserRegisterRequest;
 import xyz.kbws.model.entity.Focus;
@@ -154,6 +158,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             redisComponent.updateUserVO(tokenUserInfo);
         }
         return res;
+    }
+
+    @Override
+    public Boolean changeStatus(UserChangeStatusRequest userChangeStatusRequest) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", userChangeStatusRequest.getUserId())
+                .set("userRole", userChangeStatusRequest.getUserRole());
+        return this.update(updateWrapper);
+    }
+
+    @Override
+    public QueryWrapper<User> getQueryWrapper(UserLoadRequest userLoadRequest) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        String nickName = userLoadRequest.getNickName();
+        String email = userLoadRequest.getEmail();
+        String sortField = userLoadRequest.getSortField();
+
+        queryWrapper.like(StrUtil.isNotEmpty(nickName), "nickName", nickName);
+        queryWrapper.like(StrUtil.isNotEmpty(email), "email", email);
+        queryWrapper.orderByDesc(StrUtil.isNotEmpty(sortField), "sortField", sortField);
+        return queryWrapper;
     }
 }
 

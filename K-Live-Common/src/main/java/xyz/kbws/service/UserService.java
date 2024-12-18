@@ -1,6 +1,9 @@
 package xyz.kbws.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import xyz.kbws.model.dto.user.UserChangeStatusRequest;
+import xyz.kbws.model.dto.user.UserLoadRequest;
 import xyz.kbws.model.dto.user.UserLoginRequest;
 import xyz.kbws.model.dto.user.UserRegisterRequest;
 import xyz.kbws.model.entity.User;
@@ -20,5 +23,9 @@ public interface UserService extends IService<User> {
     UserVO getUserDetailInfo(String currentUserId, String userId);
 
     Boolean updateUserInfo(User user, UserVO tokenUserInfo);
+
+    Boolean changeStatus(UserChangeStatusRequest userChangeStatusRequest);
+
+    QueryWrapper<User> getQueryWrapper(UserLoadRequest userLoadRequest);
 
 }
