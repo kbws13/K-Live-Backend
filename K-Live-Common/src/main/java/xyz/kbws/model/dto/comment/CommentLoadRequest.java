@@ -17,6 +17,8 @@ public class CommentLoadRequest extends PageRequest implements Serializable {
     @NotEmpty(message = "视频 id 不能为空")
     private String videoId;
 
+    private String videoName;
+
     private Integer orderType;
 
     private static final long serialVersionUID = 7786912850978144296L;

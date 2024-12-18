@@ -45,6 +45,9 @@
         <if test="query.userId != null and query.userId != ''">
             and userId = #{query.userId}
         </if>
+        <if test="query.videoNameFuzzy != null and query.videoNameFuzzy != ''">
+            and vd.name like CDATA('%', #{query.videoNameFuzzy}, '%')
+        </if>
     </sql>
 
     <select id="selectList" resultType="xyz.kbws.model.entity.VideoComment">

@@ -30,6 +30,9 @@
         <if test="query.userId != null and query.userId != ''">
             and vd.userId = #{query.userId}
         </if>
+        <if test="query.videoNameFuzzy != null and query.videoNameFuzzy != ''">
+            and vd.name like CONCAT('%', #{query.videoNameFuzzy}, '%')
+        </if>
     </sql>
 
     <select id="selectList" resultMap="BaseResultMap">

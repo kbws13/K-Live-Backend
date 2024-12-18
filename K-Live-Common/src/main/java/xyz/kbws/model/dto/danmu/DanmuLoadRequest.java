@@ -1,6 +1,7 @@
 package xyz.kbws.model.dto.danmu;
 
 import lombok.Data;
+import xyz.kbws.common.PageRequest;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -11,7 +12,7 @@ import java.io.Serializable;
  * @description: 加载弹幕请求
  */
 @Data
-public class DanmuLoadRequest implements Serializable {
+public class DanmuLoadRequest extends PageRequest implements Serializable {
 
     @NotEmpty(message = "视频 id 不能为空")
     private String videoId;

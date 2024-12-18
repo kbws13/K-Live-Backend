@@ -13,6 +13,8 @@ public class VideoCommentQuery extends PageRequest {
 
     private String videoId;
 
+    private String videoNameFuzzy;
+
     private String userId;
 
     private Integer parentCommandId;

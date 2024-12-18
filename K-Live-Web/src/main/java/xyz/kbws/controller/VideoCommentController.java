@@ -17,7 +17,6 @@ import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.UserConstant;
 import xyz.kbws.exception.BusinessException;
-import xyz.kbws.mapper.VideoCommentMapper;
 import xyz.kbws.model.dto.comment.CommentAddRequest;
 import xyz.kbws.model.dto.comment.CommentLoadRequest;
 import xyz.kbws.model.entity.Action;
@@ -55,9 +54,6 @@ public class VideoCommentController {
 
     @Resource
     private VideoCommentService videoCommentService;
-
-    @Resource
-    private VideoCommentMapper videoCommentMapper;
 
     @Resource
     private ActionService actionService;

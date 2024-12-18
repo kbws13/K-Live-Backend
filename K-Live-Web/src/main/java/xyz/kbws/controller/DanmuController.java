@@ -2,7 +2,6 @@ package xyz.kbws.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +13,12 @@ import xyz.kbws.common.BaseResponse;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.common.ResultUtils;
 import xyz.kbws.constant.UserConstant;
-import xyz.kbws.exception.BusinessException;
 import xyz.kbws.exception.ThrowUtils;
 import xyz.kbws.model.dto.danmu.DanmuLoadRequest;
 import xyz.kbws.model.dto.danmu.DanmuPostRequest;
 import xyz.kbws.model.entity.Danmu;
 import xyz.kbws.model.entity.Video;
+import xyz.kbws.model.query.DanmuQuery;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.DanmuService;
@@ -70,10 +69,10 @@ public class DanmuController {
         if (video.getInteraction() != null && video.getInteraction().contains(UserConstant.ONE.toString())) {
             return ResultUtils.success(new ArrayList<>());
         }
-        QueryWrapper<Danmu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("fileId", danmuLoadRequest.getFileId());
-        queryWrapper.orderByAsc("id");
-        List<Danmu> list = danmuService.list(queryWrapper);
+        DanmuQuery danmuQuery = new DanmuQuery();
+        BeanUtil.copyProperties(danmuLoadRequest, danmuQuery);
+        danmuQuery.setQueryVideoInfo(true);
+        List<Danmu> list = danmuService.selectListByParam(danmuQuery);
         return ResultUtils.success(list);
     }
 }

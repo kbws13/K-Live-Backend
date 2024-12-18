@@ -119,7 +119,7 @@ public class VideoCommentServiceImpl extends ServiceImpl<VideoCommentMapper, Vid
         if (video == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "评论所在视频不存在");
         }
-        if (!video.getUserId().equals(userId) && !comment.getUserId().equals(userId)) {
+        if (userId != null && !video.getUserId().equals(userId) && !comment.getUserId().equals(userId)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "你没有权限删除");
         }
         boolean res1 = this.removeById(commentId);

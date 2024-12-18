@@ -19,5 +19,7 @@ public class DanmuQuery extends PageRequest implements Serializable {
 
     private Boolean queryVideoInfo;
 
+    private String videoNameFuzzy;
+
     private static final long serialVersionUID = 7983922646304381738L;
 }
