@@ -62,10 +62,10 @@
 
     <select id="selectListTotalInfo" resultType="xyz.kbws.model.entity.StatisticInfo">
         select
-            ifnull(sum(count), 0) as count, dataType
+            ifnull(sum(count), 0) as count, statisticDate, dataType
         from statisticInfo
         where statisticDate = #{query.statisticDate}
-        group by dataType
+        group by dataType, statisticDate
     </select>
 
     <select id="selectUserCountTotalInfo" resultType="xyz.kbws.model.entity.StatisticInfo">

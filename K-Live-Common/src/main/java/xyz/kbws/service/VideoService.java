@@ -20,4 +20,6 @@ public interface VideoService extends IService<Video> {
     List<Video> selectList(VideoQueryRequest videoQueryRequest);
 
     void addPlayCount(String videoId);
+
+    Boolean recommendVideo(String videoId);
 }

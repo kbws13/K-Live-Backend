@@ -88,7 +88,7 @@ public class StatisticInfoController {
                 .ge("statisticDate", startTime)
                 .le("statisticDate", endTime)
                 .orderByAsc("statisticDate");
-        List<StatisticInfo> statisticInfoList = null;
+        List<StatisticInfo> statisticInfoList;
         if (!StatisticTypeEnum.FANS.getValue().equals(dateType)) {
             statisticInfoList = statisticInfoService.list(queryWrapper);
         }else {

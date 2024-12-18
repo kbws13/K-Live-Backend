@@ -15,6 +15,7 @@ import xyz.kbws.model.entity.Video;
 import xyz.kbws.model.entity.VideoFile;
 import xyz.kbws.model.entity.VideoPost;
 import xyz.kbws.model.enums.UserActionTypeEnum;
+import xyz.kbws.model.enums.VideoRecommendTypeEnum;
 import xyz.kbws.redis.RedisComponent;
 import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
@@ -54,15 +55,15 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteVideo(String videoId, String userId) {
-        Video video = this.getById(videoId);
-        if (video == null || userId != null && !video.getUserId().equals(userId)) {
+        VideoPost videoPost = videoPostService.getById(videoId);
+        if (videoPost == null || userId != null && !videoPost.getUserId().equals(userId)) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         this.removeById(videoId);
         videoPostService.removeById(videoId);
         // 减硬币
         SystemSetting systemSetting = redisComponent.getSystemSetting();
-        userMapper.updateCoinCount(video.getUserId(), -systemSetting.getPostVideoCoinCount());
+        userMapper.updateCoinCount(videoPost.getUserId(), -systemSetting.getPostVideoCoinCount());
         // 删除 ES 信息
         esComponent.deleteDoc(videoId);
         executorService.execute(() -> {
@@ -98,6 +99,22 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     @Override
     public void addPlayCount(String videoId) {
         videoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), 1);
+    }
+
+    @Override
+    public Boolean recommendVideo(String videoId) {
+        Video video = this.getById(videoId);
+        if (video == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        int recommendType;
+        if (video.getRecommendType().equals(VideoRecommendTypeEnum.RECOMMEND.getValue())) {
+            recommendType = VideoRecommendTypeEnum.RECOMMEND.getValue();
+        } else {
+            recommendType = VideoRecommendTypeEnum.NO_RECOMMEND.getValue();
+        }
+        video.setRecommendType(recommendType);
+        return this.updateById(video);
     }
 }
 

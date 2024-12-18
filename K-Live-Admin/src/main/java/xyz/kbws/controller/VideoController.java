@@ -1,5 +1,6 @@
 package xyz.kbws.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import xyz.kbws.constant.UserConstant;
 import xyz.kbws.mapper.VideoPostMapper;
 import xyz.kbws.model.dto.videoPost.VideoPostAuditRequest;
 import xyz.kbws.model.dto.videoPost.VideoPostQueryRequest;
+import xyz.kbws.model.entity.VideoFilePost;
 import xyz.kbws.model.enums.MessageTypeEnum;
 import xyz.kbws.model.vo.UserVO;
 import xyz.kbws.model.vo.VideoPostVO;
@@ -25,6 +27,7 @@ import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -77,5 +80,31 @@ public class VideoController {
         Integer status = videoPostAuditRequest.getStatus();
         String reason = videoPostAuditRequest.getReason();
         videoPostService.auditVideo(videoId, status, reason);
+    }
+
+    @ApiOperation(value = "设置推荐视频接口")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/recommendVideo")
+    public BaseResponse<Boolean> recommendVideo(@NotEmpty String videoId) {
+        Boolean res = videoService.recommendVideo(videoId);
+        return ResultUtils.success(res);
+    }
+
+    @ApiOperation(value = "删除视频接口")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/deleteVideo")
+    public void deleteVideo(@NotEmpty String videoId) {
+        videoService.deleteVideo(videoId, null);
+    }
+
+    @ApiOperation(value = "查询视频分 p 接口")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/loadVideoPList")
+    public BaseResponse<List<VideoFilePost>> loadVideoPList(@NotEmpty String videoId) {
+        QueryWrapper<VideoFilePost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("videoId", videoId)
+                .orderByAsc("fileIndex");
+        List<VideoFilePost> videoFilePostList = videoFilePostService.list(queryWrapper);
+        return ResultUtils.success(videoFilePostList);
     }
 }
