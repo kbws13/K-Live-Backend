@@ -1,5 +1,6 @@
 package xyz.kbws.rabbitmq;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.rabbitmq.client.Channel;
@@ -13,6 +14,7 @@ import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import xyz.kbws.common.ErrorCode;
+import xyz.kbws.config.AppConfig;
 import xyz.kbws.constant.MqConstant;
 import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
@@ -25,6 +27,7 @@ import xyz.kbws.service.VideoPostService;
 import xyz.kbws.service.VideoService;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,6 +55,9 @@ public class MessageConsumer {
     @Resource
     private EsComponent esComponent;
 
+    @Resource
+    private AppConfig appConfig;
+
     private ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     /**
@@ -69,8 +75,8 @@ public class MessageConsumer {
                     key = MqConstant.TRANSFER_VIDEO_ROOTING_KEY
             ),
             ackMode = "MANUAL", concurrency = "2")
-    public void receiveFileMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
-        log.info("receiveFileMessage message = {}", message);
+    public void receiveTransferVideoMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
+        log.info("receiveTransferVideoMessage message = {}", message);
         if (message == null) {
             // 消息为空，则拒绝消息（不重试），进入死信队列
             channel.basicNack(deliveryTag, false, false);
@@ -91,7 +97,46 @@ public class MessageConsumer {
     }
 
     /**
-     * 监听并处理消息
+     * 监听并处理删除视频文件消息
+     *
+     * @param message
+     * @param channel
+     * @param deliveryTag
+     */
+    @SneakyThrows
+    @RabbitListener(
+            bindings = @QueueBinding(
+                    value = @Queue(value = MqConstant.FILE_QUEUE),
+                    exchange = @Exchange(name = MqConstant.FILE_EXCHANGE_NAME),
+                    key = MqConstant.DEL_FILE_ROUTING_KEY
+            ),
+            ackMode = "MANUAL", concurrency = "2")
+    public void receiveDeleteFileMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
+        log.info("receiveDeleteFileMessage message = {}", message);
+        if (message == null) {
+            // 消息为空，则拒绝消息（不重试），进入死信队列
+            channel.basicNack(deliveryTag, false, false);
+            throw new BusinessException(ErrorCode.NULL_ERROR, "消息为空");
+        }
+
+        try {
+            executorService.execute(() -> {
+                VideoFilePost videoFilePost = JSONUtil.toBean(message, VideoFilePost.class);
+                boolean del = FileUtil.del(new File(appConfig.getProjectFolder() + videoFilePost.getFilePath()));
+                if (!del) {
+                    log.error("删除文件失败, 文件路径: {}", videoFilePost.getFilePath());
+                }
+            });
+            // 手动确认消息
+            channel.basicAck(deliveryTag, false);
+        } catch (Exception e) {
+            // 抛出异常，进入死信队列
+            channel.basicNack(deliveryTag, false, false);
+        }
+    }
+
+    /**
+     * 监听并处理视频播放消息
      *
      * @param message
      * @param channel

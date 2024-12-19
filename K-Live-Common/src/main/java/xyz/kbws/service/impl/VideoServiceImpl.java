@@ -1,27 +1,27 @@
 package xyz.kbws.service.impl;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.kbws.common.ErrorCode;
 import xyz.kbws.config.SystemSetting;
+import xyz.kbws.constant.MqConstant;
 import xyz.kbws.es.EsComponent;
 import xyz.kbws.exception.BusinessException;
 import xyz.kbws.mapper.UserMapper;
 import xyz.kbws.mapper.VideoMapper;
 import xyz.kbws.model.dto.video.VideoQueryRequest;
-import xyz.kbws.model.entity.Video;
-import xyz.kbws.model.entity.VideoFile;
-import xyz.kbws.model.entity.VideoPost;
+import xyz.kbws.model.entity.*;
 import xyz.kbws.model.enums.UserActionTypeEnum;
 import xyz.kbws.model.enums.VideoRecommendTypeEnum;
+import xyz.kbws.rabbitmq.MessageProducer;
 import xyz.kbws.redis.RedisComponent;
-import xyz.kbws.service.VideoPostService;
-import xyz.kbws.service.VideoService;
+import xyz.kbws.service.*;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +39,15 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     private VideoPostService videoPostService;
 
     @Resource
+    private VideoFilePostService videoFilePostService;
+
+    @Resource
+    private DanmuService danmuService;
+
+    @Resource
+    private VideoCommentService videoCommentService;
+
+    @Resource
     private VideoMapper videoMapper;
 
     @Resource
@@ -49,6 +58,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
 
     @Resource
     private EsComponent esComponent;
+
+    @Resource
+    private MessageProducer messageProducer;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -67,9 +79,24 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         // 删除 ES 信息
         esComponent.deleteDoc(videoId);
         executorService.execute(() -> {
-            // TODO 删除分 p
-            // TODO 删除弹幕
-            // TODO 删除评论
+            // 删除分 p
+            QueryWrapper<VideoFilePost> videoFilePostQueryWrapper = new QueryWrapper<>();
+            videoFilePostQueryWrapper.eq("videoId", videoId);
+            videoFilePostService.remove(videoFilePostQueryWrapper);
+            // 删除弹幕
+            QueryWrapper<Danmu> danmuQueryWrapper = new QueryWrapper<>();
+            danmuQueryWrapper.eq("videoId", videoId);
+            danmuService.remove(danmuQueryWrapper);
+            // 删除评论
+            QueryWrapper<VideoComment> videoCommentQueryWrapper = new QueryWrapper<>();
+            videoCommentQueryWrapper.eq("videoId", videoId);
+            videoCommentService.remove(videoCommentQueryWrapper);
+
+            List<VideoFilePost> videoFilePostList = videoFilePostService.list(videoFilePostQueryWrapper);
+            for (VideoFilePost videoFilePost : videoFilePostList) {
+                JSONArray jsonArray = JSONUtil.parseArray(videoFilePost);
+                messageProducer.sendMessage(MqConstant.FILE_EXCHANGE_NAME, MqConstant.DEL_FILE_ROUTING_KEY, jsonArray.toString());
+            }
         });
     }
 
