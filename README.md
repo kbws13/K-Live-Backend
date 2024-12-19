@@ -14,6 +14,7 @@ This project is an online video sharing system where users can independently pos
 - ElasticSearch 3.3.2
 
 ## Tool Library
+- FFmpeg 7.1
 - Aspect 1.9.3
 - Logback 1.2.10
 - Apache Common 3.4
