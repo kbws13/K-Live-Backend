@@ -13,15 +13,10 @@ import java.io.Serializable;
 @Data
 public class FocusVO extends Focus implements Serializable {
 
-    private String otherNickName;
-
-    private String otherUserId;
-
-    private String otherPersonIntroduction;
-
-    private String otherAvatar;
-
-    private Integer focusType;
-
     private static final long serialVersionUID = -5146922216277083466L;
+    private String otherNickName;
+    private String otherUserId;
+    private String otherPersonIntroduction;
+    private String otherAvatar;
+    private Integer focusType;
 }

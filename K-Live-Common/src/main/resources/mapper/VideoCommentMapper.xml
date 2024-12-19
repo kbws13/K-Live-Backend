@@ -5,20 +5,20 @@
 <mapper namespace="xyz.kbws.mapper.VideoCommentMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.VideoComment">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="parentCommentId" column="parentCommentId" jdbcType="INTEGER"/>
-            <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
-            <result property="videoUserId" column="videoUserId" jdbcType="VARCHAR"/>
-            <result property="content" column="content" jdbcType="VARCHAR"/>
-            <result property="imgPath" column="imgPath" jdbcType="VARCHAR"/>
-            <result property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="replyUserId" column="replyUserId" jdbcType="VARCHAR"/>
-            <result property="topType" column="topType" jdbcType="TINYINT"/>
-            <result property="postTime" column="postTime" jdbcType="TIMESTAMP"/>
-            <result property="likeCount" column="likeCount" jdbcType="INTEGER"/>
-            <result property="hateCount" column="hateCount" jdbcType="INTEGER"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentCommentId" column="parentCommentId" jdbcType="INTEGER"/>
+        <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
+        <result property="videoUserId" column="videoUserId" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="imgPath" column="imgPath" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="replyUserId" column="replyUserId" jdbcType="VARCHAR"/>
+        <result property="topType" column="topType" jdbcType="TINYINT"/>
+        <result property="postTime" column="postTime" jdbcType="TIMESTAMP"/>
+        <result property="likeCount" column="likeCount" jdbcType="INTEGER"/>
+        <result property="hateCount" column="hateCount" jdbcType="INTEGER"/>
     </resultMap>
-    
+
     <resultMap id="BaseResultMapChildren" type="xyz.kbws.model.entity.VideoComment" extends="BaseResultMap">
         <collection property="children" column="id" select="xyz.kbws.mapper.VideoCommentMapper.selectChildrenComment">
         </collection>
@@ -30,7 +30,7 @@
         userId,replyUserId,topType,
         postTime,likeCount,hateCount
     </sql>
-    
+
     <sql id="query_condition">
         where
         <if test="query.videoId != null and query.videoId != ''">
@@ -52,7 +52,7 @@
 
     <select id="selectList" resultType="xyz.kbws.model.entity.VideoComment">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         <if test="query.queryVideoInfo">
             , vd.name videoName, vd.cover, u.nickName, u.avatar, u2.nickName replyNickName
         </if>
@@ -62,7 +62,7 @@
             left join user u on u.id = v.userId
             left join user u2 on u2.id = v.replyUserId
         </if>
-        <include refid="query_condition" />
+        <include refid="query_condition"/>
         <if test="query.sortField != null">
             order by ${query.sortField}
         </if>
@@ -76,22 +76,24 @@
         <if test="query.queryVideoInfo">
             inner join video vd on vd.id = v.videoId
         </if>
-        <include refid="query_condition" />
+        <include refid="query_condition"/>
     </select>
 
     <select id="selectChildrenComment" resultMap="BaseResultMap">
         select v.*, u.nickName, u.avatar, u2.nickName replyNickName, u2.avatar replyAvatar
         from videoComment v
-        inner join user u on v.userId = u.id
-        left join user u2 on u2.id = v.replyUserId
-        where parentCommentId = #{commentId} order by v.id asc
+                 inner join user u on v.userId = u.id
+                 left join user u2 on u2.id = v.replyUserId
+        where parentCommentId = #{commentId}
+        order by v.id asc
     </select>
 
     <select id="selectListWithChildren" resultMap="BaseResultMapChildren">
         select
-        <include refid="Base_Column_List" />, u.nickName, u.avatar
+        <include refid="Base_Column_List"/>, u.nickName, u.avatar
         from videoComment v left join user u on v.userId = u.id
-        where <include refid="query_condition" />
+        where
+        <include refid="query_condition"/>
         <if test="query.sortField != null">
             order by ${query.sortField}
         </if>

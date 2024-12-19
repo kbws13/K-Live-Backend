@@ -5,10 +5,10 @@
 <mapper namespace="xyz.kbws.mapper.VideoPlayHistoryMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.VideoPlayHistory">
-            <id property="userId" column="userId" jdbcType="VARCHAR"/>
-            <id property="videoId" column="videoId" jdbcType="VARCHAR"/>
-            <result property="fileIndex" column="fileIndex" jdbcType="INTEGER"/>
-            <result property="lastUpdateTime" column="lastUpdateTime" jdbcType="TIMESTAMP"/>
+        <id property="userId" column="userId" jdbcType="VARCHAR"/>
+        <id property="videoId" column="videoId" jdbcType="VARCHAR"/>
+        <result property="fileIndex" column="fileIndex" jdbcType="INTEGER"/>
+        <result property="lastUpdateTime" column="lastUpdateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -24,7 +24,7 @@
 
     <select id="selectList" resultType="xyz.kbws.model.entity.VideoPlayHistory">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         <if test="query.queryVideoInfo">
             , d.cover videoCover, d.name videoName
         </if>
@@ -33,7 +33,7 @@
             left join video d on d.id = v.videoId
         </if>
         where
-        <include refid="queryCondition" />
+        <include refid="queryCondition"/>
         <if test="query.sortField != null">
             order by #{query.sortField} #{videoQueryRequest.sortOrder}
         </if>

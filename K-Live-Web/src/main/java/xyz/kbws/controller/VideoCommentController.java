@@ -147,7 +147,7 @@ public class VideoCommentController {
     @ApiOperation(value = "取消置顶")
     @AuthCheck
     @PostMapping("/cancelTop")
-    public BaseResponse<Boolean>  cancelTopComment(@NotNull Integer commentId, HttpServletRequest request) {
+    public BaseResponse<Boolean> cancelTopComment(@NotNull Integer commentId, HttpServletRequest request) {
         String token = request.getHeader("token");
         UserVO userVO = redisComponent.getUserVO(token);
         boolean res = videoCommentService.cancelTopComment(commentId, userVO.getId());
@@ -157,7 +157,7 @@ public class VideoCommentController {
     @ApiOperation(value = "删除评论")
     @AuthCheck
     @PostMapping("/delete")
-    public BaseResponse<Boolean>  deleteComment(@NotNull Integer commentId, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteComment(@NotNull Integer commentId, HttpServletRequest request) {
         String token = request.getHeader("token");
         UserVO userVO = redisComponent.getUserVO(token);
         boolean res = videoCommentService.deleteComment(commentId, userVO.getId());

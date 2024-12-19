@@ -17,7 +17,6 @@ import xyz.kbws.model.query.DanmuQuery;
 import xyz.kbws.service.DanmuService;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 
 /**

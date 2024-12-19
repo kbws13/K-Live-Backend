@@ -14,8 +14,7 @@ import java.io.Serializable;
 @Data
 public class MessageLoadRequest extends PageRequest implements Serializable {
 
+    private static final long serialVersionUID = 4176301813403470148L;
     @NotNull(message = "消息类型不能为空")
     private Integer messageType;
-
-    private static final long serialVersionUID = 4176301813403470148L;
 }

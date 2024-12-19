@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 public class SeriesDetailVO implements Serializable {
 
-    private Series series;
-
-    private List<SeriesContent> seriesContentList;
-
     private static final long serialVersionUID = 4208386275632303370L;
+    private Series series;
+    private List<SeriesContent> seriesContentList;
 }

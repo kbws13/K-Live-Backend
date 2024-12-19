@@ -5,10 +5,10 @@
 <mapper namespace="xyz.kbws.mapper.StatisticInfoMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.StatisticInfo">
-            <result property="statisticDate" column="statisticDate" jdbcType="VARCHAR"/>
-            <result property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="dataType" column="dataType" jdbcType="TINYINT"/>
-            <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="statisticDate" column="statisticDate" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="dataType" column="dataType" jdbcType="TINYINT"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -17,20 +17,20 @@
     </sql>
 
     <select id="selectFans" resultType="xyz.kbws.model.entity.StatisticInfo">
-        select
-            focusUserId, count(1) statisticCount
+        select focusUserId,
+               count(1) statisticCount
         from focus
         where
-            <![CDATA[ DATE_FORMAT(focusTime, '%Y-%m-%d')=#{statisticDate} ]]>
+            <![CDATA[ DATE_FORMAT(focusTime, '%Y-%m-%d') = #{statisticDate} ]]>
         group by focusUserId
     </select>
 
     <select id="selectComment" resultType="xyz.kbws.model.entity.StatisticInfo">
-        select
-            videoUserId as userId, count(1) statisticCount
+        select videoUserId as userId,
+               count(1)       statisticCount
         from videoComment
         where
-            <![CDATA[ DATE_FORMAT(postTime, '%Y-%m-%d')=#{statisticDate} ]]>
+            <![CDATA[ DATE_FORMAT(postTime, '%Y-%m-%d') = #{statisticDate} ]]>
         group by videoUserId
     </select>
 
@@ -38,20 +38,20 @@
         select videoUserId as userId, actionType as dataType, sum(count) as statisticCount
         from action
         where
-            <![CDATA[ DATE_FORMAT(actionTime, '%Y-%m-%d')=#{statisticDate} ]]>
+        <![CDATA[ DATE_FORMAT(actionTime, '%Y-%m-%d')=#{statisticDate} ]]>
         and
-            actionType in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach>)
+        actionType in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach>)
         group by videoUserId, actionType
     </select>
 
     <select id="selectTotalCount" resultType="java.util.Map">
         select
-            ifnull(sum(playCount, 0)),
-            ifnull(sum(likeCount, 0)),
-            ifnull(sum(danmuCount, 0)),
-            ifnull(sum(commentCount, 0)),
-            ifnull(sum(coinCount, 0)),
-            ifnull(sum(collectCount, 0))
+        ifnull(sum(playCount, 0)),
+        ifnull(sum(likeCount, 0)),
+        ifnull(sum(danmuCount, 0)),
+        ifnull(sum(commentCount, 0)),
+        ifnull(sum(coinCount, 0)),
+        ifnull(sum(collectCount, 0))
         from video
         <where>
             <if test="userId != null">
@@ -61,8 +61,9 @@
     </select>
 
     <select id="selectListTotalInfo" resultType="xyz.kbws.model.entity.StatisticInfo">
-        select
-            ifnull(sum(count), 0) as count, statisticDate, dataType
+        select ifnull(sum(count), 0) as count,
+               statisticDate,
+               dataType
         from statisticInfo
         where statisticDate = #{query.statisticDate}
         group by dataType, statisticDate

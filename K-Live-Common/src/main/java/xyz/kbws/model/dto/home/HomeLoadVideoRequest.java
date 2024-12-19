@@ -14,14 +14,10 @@ import java.io.Serializable;
 @Data
 public class HomeLoadVideoRequest extends PageRequest implements Serializable {
 
+    private static final long serialVersionUID = -2353028002558441797L;
     @NotEmpty(message = "用户 id 不能为空")
     private String userId;
-
     private Integer type;
-
     private String videoName;
-
     private Integer orderType;
-
-    private static final long serialVersionUID = -2353028002558441797L;
 }

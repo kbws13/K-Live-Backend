@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 public class VideoInfoResultVO implements Serializable {
 
-    private Video video;
-
-    private List<Action> userActionList;
-
     private static final long serialVersionUID = -6559627645429069138L;
+    private Video video;
+    private List<Action> userActionList;
 }

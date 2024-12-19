@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.kbws.annotation.AuthCheck;
 import xyz.kbws.annotation.RecordMessage;
-import xyz.kbws.common.BaseResponse;
 import xyz.kbws.model.dto.action.ActionDoRequest;
 import xyz.kbws.model.entity.Action;
 import xyz.kbws.model.enums.MessageTypeEnum;

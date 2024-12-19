@@ -9,11 +9,11 @@ import xyz.kbws.model.vo.FocusVO;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【focus(关注表)】的数据库操作Mapper
-* @createDate 2024-12-09 20:54:18
-* @Entity generator.domain.Focus
-*/
+ * @author fangyuan
+ * @description 针对表【focus(关注表)】的数据库操作Mapper
+ * @createDate 2024-12-09 20:54:18
+ * @Entity generator.domain.Focus
+ */
 public interface FocusMapper extends BaseMapper<Focus> {
 
     Integer selectFansCount(@Param("userId") String userId);

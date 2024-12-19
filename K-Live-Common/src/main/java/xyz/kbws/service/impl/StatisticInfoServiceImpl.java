@@ -21,19 +21,18 @@ import xyz.kbws.service.StatisticInfoService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
-* @author fangyuan
-* @description 针对表【statisticInfo(数据统计表)】的数据库操作Service实现
-* @createDate 2024-12-15 12:09:09
-*/
+ * @author fangyuan
+ * @description 针对表【statisticInfo(数据统计表)】的数据库操作Service实现
+ * @createDate 2024-12-15 12:09:09
+ */
 @Service
 public class StatisticInfoServiceImpl extends ServiceImpl<StatisticInfoMapper, StatisticInfo>
-    implements StatisticInfoService {
+        implements StatisticInfoService {
 
     @Resource
     private StatisticInfoMapper statisticInfoMapper;
@@ -100,7 +99,7 @@ public class StatisticInfoServiceImpl extends ServiceImpl<StatisticInfoMapper, S
         statisticInfoList.addAll(commentDataList);
 
         // 弹幕、点赞、收藏、投币
-        Integer[] actionTypeArray =new Integer[]{
+        Integer[] actionTypeArray = new Integer[]{
                 UserActionTypeEnum.VIDEO_LIKE.getValue(),
                 UserActionTypeEnum.VIDEO_COIN.getValue(),
                 UserActionTypeEnum.VIDEO_DANMU.getValue(),

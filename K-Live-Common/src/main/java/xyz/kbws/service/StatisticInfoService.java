@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* @author fangyuan
-* @description 针对表【statisticInfo(数据统计表)】的数据库操作Service
-* @createDate 2024-12-15 12:09:09
-*/
+ * @author fangyuan
+ * @description 针对表【statisticInfo(数据统计表)】的数据库操作Service
+ * @createDate 2024-12-15 12:09:09
+ */
 public interface StatisticInfoService extends IService<StatisticInfo> {
 
     void syncStatisticInfoData();

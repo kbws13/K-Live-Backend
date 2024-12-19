@@ -14,11 +14,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VideoPlayRequest implements Serializable {
 
-    private String videoId;
-
-    private String userId;
-
-    private Integer fileIndex;
-
     private static final long serialVersionUID = 5226611920468138498L;
+    private String videoId;
+    private String userId;
+    private Integer fileIndex;
 }

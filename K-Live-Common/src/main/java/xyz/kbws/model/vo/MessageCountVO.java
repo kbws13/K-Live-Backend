@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Data
 public class MessageCountVO implements Serializable {
 
-    private Integer messageType;
-
-    private Integer messageCount;
-
     private static final long serialVersionUID = 8605130088232659779L;
+    private Integer messageType;
+    private Integer messageCount;
 }

@@ -13,15 +13,13 @@ import java.io.Serializable;
 @Data
 public class UserLoadRequest extends PageRequest implements Serializable {
 
+    private static final long serialVersionUID = -6204302910536859082L;
     /**
      * 昵称
      */
     private String nickName;
-
     /**
      * 邮箱
      */
     private String email;
-
-    private static final long serialVersionUID = -6204302910536859082L;
 }

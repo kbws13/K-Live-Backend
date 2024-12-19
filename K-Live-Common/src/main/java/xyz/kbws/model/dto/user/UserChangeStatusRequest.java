@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Data
 public class UserChangeStatusRequest implements Serializable {
 
-    private String userId;
-
-    private Integer userRole;
-
     private static final long serialVersionUID = -5558226427711147363L;
+    private String userId;
+    private Integer userRole;
 }

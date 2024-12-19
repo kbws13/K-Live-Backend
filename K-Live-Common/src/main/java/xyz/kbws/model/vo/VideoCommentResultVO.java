@@ -16,9 +16,7 @@ import java.util.List;
 @Data
 public class VideoCommentResultVO implements Serializable {
 
-    private Page<VideoComment> page;
-
-    private List<Action> actionList;
-
     private static final long serialVersionUID = 8679828211028458315L;
+    private Page<VideoComment> page;
+    private List<Action> actionList;
 }

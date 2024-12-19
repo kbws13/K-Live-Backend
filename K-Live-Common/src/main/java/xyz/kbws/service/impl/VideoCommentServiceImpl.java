@@ -20,7 +20,6 @@ import xyz.kbws.model.query.VideoCommentQuery;
 import xyz.kbws.service.VideoCommentService;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 
 /**

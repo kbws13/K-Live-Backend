@@ -4,12 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.Objects;
-
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -27,6 +21,9 @@ import xyz.kbws.service.MessageService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Objects;
 
 /**
  * @author kbws
@@ -38,13 +35,11 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class MessageInterceptor {
 
+    public static final String parameters_video_id = "videoId";
     @Resource
     private MessageService messageService;
-
     @Resource
     private RedisComponent redisComponent;
-
-    public static final String parameters_video_id = "videoId";
 
     @Around("@annotation(xyz.kbws.annotation.RecordMessage)")
     public BaseResponse doInterceptor(ProceedingJoinPoint point) throws Throwable {
@@ -63,7 +58,7 @@ public class MessageInterceptor {
         UserVO userVO = redisComponent.getUserVO(token);
         MessageTypeEnum messageTypeEnum = recordMessage.messageType();
 
-        switch (messageTypeEnum){
+        switch (messageTypeEnum) {
             case LIKE:
                 ActionDoRequest actionDoRequest = (ActionDoRequest) arguments[0];
                 if (Objects.equals(UserActionTypeEnum.VIDEO_COLLECT.getValue(), actionDoRequest.getActionType())) {

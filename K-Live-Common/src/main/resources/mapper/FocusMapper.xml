@@ -5,9 +5,9 @@
 <mapper namespace="xyz.kbws.mapper.FocusMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.Focus">
-            <id property="userId" column="userId" jdbcType="VARCHAR"/>
-            <id property="focusUserId" column="focusUserId" jdbcType="VARCHAR"/>
-            <result property="focusTime" column="focusTime" jdbcType="TIMESTAMP"/>
+        <id property="userId" column="userId" jdbcType="VARCHAR"/>
+        <id property="focusUserId" column="focusUserId" jdbcType="VARCHAR"/>
+        <result property="focusTime" column="focusTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -24,19 +24,24 @@
     </sql>
 
     <select id="selectFansCount" resultType="java.lang.Integer">
-        select count(1) from focus where focusUserId = #{userId}
+        select count(1)
+        from focus
+        where focusUserId = #{userId}
     </select>
 
     <select id="selectFocusCount" resultType="java.lang.Integer">
-        select count(1) from focus where userId = #{userId}
+        select count(1)
+        from focus
+        where userId = #{userId}
     </select>
 
     <select id="selectList" resultType="xyz.kbws.model.vo.FocusVO">
         select
         u.*
         <if test="query.queryType != null">
-            , i.nickName otherNickName, i.id otherUserId, i.personIntroduction otherPersonIntroduction, i.avatar otherAvatar
-             , (select count(1) from focus f where u.userId = f.focusUserId and u.focusUserId = f.userId) focusType
+            , i.nickName otherNickName, i.id otherUserId, i.personIntroduction otherPersonIntroduction, i.avatar
+            otherAvatar
+            , (select count(1) from focus f where u.userId = f.focusUserId and u.focusUserId = f.userId) focusType
         </if>
         from focus u
         <if test="query.queryType == 0">
@@ -45,7 +50,8 @@
         <if test="query.queryType == 1">
             inner join user i on i.id = u.userId
         </if>
-        where <include refid="query_condition" />
+        where
+        <include refid="query_condition"/>
         <if test="query.orderBy != null">
             order by #{query.orderBy}
         </if>

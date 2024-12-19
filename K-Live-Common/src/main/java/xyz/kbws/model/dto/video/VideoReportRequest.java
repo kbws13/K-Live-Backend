@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Data
 public class VideoReportRequest implements Serializable {
 
-    private String fileId;
-
-    private String deviceId;
-
     private static final long serialVersionUID = 7838232634254252322L;
+    private String fileId;
+    private String deviceId;
 }

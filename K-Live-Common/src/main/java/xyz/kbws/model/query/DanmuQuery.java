@@ -13,13 +13,9 @@ import java.io.Serializable;
 @Data
 public class DanmuQuery extends PageRequest implements Serializable {
 
-    private String videoId;
-
-    private String userId;
-
-    private Boolean queryVideoInfo;
-
-    private String videoNameFuzzy;
-
     private static final long serialVersionUID = 7983922646304381738L;
+    private String videoId;
+    private String userId;
+    private Boolean queryVideoInfo;
+    private String videoNameFuzzy;
 }

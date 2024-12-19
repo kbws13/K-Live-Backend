@@ -14,11 +14,9 @@ import java.io.Serializable;
 @Data
 public class DanmuLoadRequest extends PageRequest implements Serializable {
 
+    private static final long serialVersionUID = 3278820721130985915L;
     @NotEmpty(message = "视频 id 不能为空")
     private String videoId;
-
     @NotEmpty(message = "视频分 p 的 id 不能为空")
     private String fileId;
-
-    private static final long serialVersionUID = 3278820721130985915L;
 }

@@ -19,17 +19,16 @@ import xyz.kbws.service.VideoService;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【series(视频合集表)】的数据库操作Service实现
-* @createDate 2024-12-09 20:54:21
-*/
+ * @author fangyuan
+ * @description 针对表【series(视频合集表)】的数据库操作Service实现
+ * @createDate 2024-12-09 20:54:21
+ */
 @Service
 public class SeriesServiceImpl extends ServiceImpl<SeriesMapper, Series>
-    implements SeriesService {
+        implements SeriesService {
 
     @Resource
     private VideoService videoService;

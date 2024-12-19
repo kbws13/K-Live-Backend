@@ -91,7 +91,7 @@ public class StatisticInfoController {
         List<StatisticInfo> statisticInfoList;
         if (!StatisticTypeEnum.FANS.getValue().equals(dateType)) {
             statisticInfoList = statisticInfoService.list(queryWrapper);
-        }else {
+        } else {
             StatisticInfoQuery query = new StatisticInfoQuery();
             statisticInfoList = statisticInfoService.findUserCountTotalInfo(query);
         }

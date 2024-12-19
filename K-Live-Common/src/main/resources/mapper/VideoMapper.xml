@@ -79,6 +79,8 @@
     </update>
 
     <select id="selectSumCountInfoVO" resultType="xyz.kbws.model.vo.CountInfoVO">
-        select ifnull(sum(playCount), 0) as playCount, ifnull(sum(likeCount), 0) as likeCount from video where userId = #{userId}
+        select ifnull(sum(playCount), 0) as playCount, ifnull(sum(likeCount), 0) as likeCount
+        from video
+        where userId = #{userId}
     </select>
 </mapper>

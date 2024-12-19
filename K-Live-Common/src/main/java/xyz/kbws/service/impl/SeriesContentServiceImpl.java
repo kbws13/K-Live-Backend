@@ -11,13 +11,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【seriesContent(视频合集内容表)】的数据库操作Service实现
-* @createDate 2024-12-09 20:54:24
-*/
+ * @author fangyuan
+ * @description 针对表【seriesContent(视频合集内容表)】的数据库操作Service实现
+ * @createDate 2024-12-09 20:54:24
+ */
 @Service
 public class SeriesContentServiceImpl extends ServiceImpl<SeriesContentMapper, SeriesContent>
-    implements SeriesContentService {
+        implements SeriesContentService {
 
     @Resource
     private SeriesContentMapper seriesContentMapper;

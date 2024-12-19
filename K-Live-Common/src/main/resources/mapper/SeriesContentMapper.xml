@@ -5,10 +5,10 @@
 <mapper namespace="xyz.kbws.mapper.SeriesContentMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.SeriesContent">
-            <id property="seriesId" column="seriesId" jdbcType="INTEGER"/>
-            <id property="videoId" column="videoId" jdbcType="VARCHAR"/>
-            <id property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="sort" column="sort" jdbcType="TINYINT"/>
+        <id property="seriesId" column="seriesId" jdbcType="INTEGER"/>
+        <id property="videoId" column="videoId" jdbcType="VARCHAR"/>
+        <id property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="sort" column="sort" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -16,7 +16,9 @@
     </sql>
 
     <select id="selectMaxSort" resultType="java.lang.Integer">
-        select ifnull(max(sort), 0) from seriesContent u where u.seriesId = #{seriesId}
+        select ifnull(max(sort), 0)
+        from seriesContent u
+        where u.seriesId = #{seriesId}
     </select>
 
     <select id="selectList" resultType="xyz.kbws.model.entity.SeriesContent">

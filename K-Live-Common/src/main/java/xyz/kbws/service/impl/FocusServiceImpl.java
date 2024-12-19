@@ -15,13 +15,13 @@ import xyz.kbws.service.FocusService;
 import javax.annotation.Resource;
 
 /**
-* @author fangyuan
-* @description 针对表【focus(关注表)】的数据库操作Service实现
-* @createDate 2024-12-09 20:54:18
-*/
+ * @author fangyuan
+ * @description 针对表【focus(关注表)】的数据库操作Service实现
+ * @createDate 2024-12-09 20:54:18
+ */
 @Service
 public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus>
-    implements FocusService {
+        implements FocusService {
 
     @Resource
     private UserMapper userMapper;

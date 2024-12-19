@@ -22,7 +22,7 @@ public interface VideoCommentMapper extends BaseMapper<VideoComment> {
     void updateCount(@Param("id") Integer id, @Param("field") String field, @Param("changeCount") Integer changeCount,
                      @Param("opposeField") String opposeField, @Param("opposeChangeCount") Integer opposeChangeCount);
 
-    Integer selectCount(@Param("query")VideoCommentQuery query);
+    Integer selectCount(@Param("query") VideoCommentQuery query);
 }
 
 

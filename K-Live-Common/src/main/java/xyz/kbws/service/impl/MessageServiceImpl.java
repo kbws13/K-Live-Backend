@@ -26,13 +26,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* @author fangyuan
-* @description 针对表【message(用户消息表)】的数据库操作Service实现
-* @createDate 2024-12-15 12:08:31
-*/
+ * @author fangyuan
+ * @description 针对表【message(用户消息表)】的数据库操作Service实现
+ * @createDate 2024-12-15 12:08:31
+ */
 @Service
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
-    implements MessageService {
+        implements MessageService {
 
     @Resource
     private MessageMapper messageMapper;

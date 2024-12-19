@@ -5,14 +5,14 @@
 <mapper namespace="xyz.kbws.mapper.ActionMapper">
 
     <resultMap id="BaseResultMap" type="xyz.kbws.model.entity.Action">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
-            <result property="videoUserId" column="videoUserId" jdbcType="VARCHAR"/>
-            <result property="commentId" column="commentId" jdbcType="INTEGER"/>
-            <result property="actionType" column="actionType" jdbcType="TINYINT"/>
-            <result property="count" column="count" jdbcType="INTEGER"/>
-            <result property="userId" column="userId" jdbcType="VARCHAR"/>
-            <result property="actionTime" column="actionTime" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="videoId" column="videoId" jdbcType="VARCHAR"/>
+        <result property="videoUserId" column="videoUserId" jdbcType="VARCHAR"/>
+        <result property="commentId" column="commentId" jdbcType="INTEGER"/>
+        <result property="actionType" column="actionType" jdbcType="TINYINT"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="actionTime" column="actionTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -20,7 +20,7 @@
         commentId,actionType,count,
         userId,actionTime
     </sql>
-    
+
     <sql id="queryCondition">
         <if test="query.userId != null and query.userId != ''">
             userId = #{query.userId}
@@ -38,7 +38,7 @@
             left join video v on v.id = u.videoId
         </if>
         where
-        <include refid="queryCondition" />
+        <include refid="queryCondition"/>
         <if test="query.sortField != null">
             order by ${query.sortField} ${query.sortOrder}
         </if>

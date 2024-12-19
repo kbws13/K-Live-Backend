@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 public class VideoPostEditVO implements Serializable {
 
-    private VideoPost videoPost;
-
-    private List<VideoFilePost> videoFilePostList;
-
     private static final long serialVersionUID = -7720355675345369426L;
+    private VideoPost videoPost;
+    private List<VideoFilePost> videoFilePostList;
 }
